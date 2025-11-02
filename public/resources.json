@@ -1,0 +1,77 @@
+{
+  "nz": {
+    "emergency": {
+      "name": "Emergency Services",
+      "phone": "111",
+      "description": "For immediate life-threatening emergencies",
+      "available": "24/7"
+    },
+    "lifeline": {
+      "name": "Lifeline Aotearoa",
+      "phone": "0800 543 354",
+      "description": "Free, confidential support for anyone in distress",
+      "available": "24/7",
+      "website": "https://www.lifeline.org.nz"
+    },
+    "healthline": {
+      "name": "Healthline",
+      "phone": "0800 611 116",
+      "description": "Free health advice from trained registered nurses",
+      "available": "24/7",
+      "website": "https://www.healthline.govt.nz"
+    },
+    "samaritans": {
+      "name": "Samaritans",
+      "phone": "0800 726 666",
+      "description": "Confidential support for anyone feeling lonely, in distress or struggling to cope",
+      "available": "24/7",
+      "website": "https://www.samaritans.org.nz"
+    },
+    "youthline": {
+      "name": "Youthline",
+      "phone": "0800 376 633",
+      "text": "234",
+      "description": "Support for young people, available via phone, text, email and webchat",
+      "available": "24/7",
+      "website": "https://www.youthline.co.nz"
+    },
+    "depression": {
+      "name": "Depression Helpline",
+      "phone": "0800 111 757",
+      "description": "Support for people experiencing depression or anxiety",
+      "available": "24/7",
+      "website": "https://depression.org.nz"
+    },
+    "mentalHealthCrisis": {
+      "name": "Mental Health Crisis Team",
+      "phone": "0800 800 717",
+      "description": "Immediate mental health support and crisis intervention",
+      "available": "24/7"
+    },
+    "needToTalk": {
+      "name": "Need to Talk?",
+      "phone": "1737",
+      "text": "1737",
+      "description": "Free call or text to talk with a trained counsellor",
+      "available": "24/7",
+      "website": "https://1737.org.nz"
+    }
+  },
+  "online": {
+    "mentalHealth": {
+      "name": "Mental Health Foundation NZ",
+      "website": "https://www.mentalhealth.org.nz",
+      "description": "Information and resources about mental health and wellbeing"
+    },
+    "justAThought": {
+      "name": "Just a Thought",
+      "website": "https://www.justathought.co.nz",
+      "description": "Free online therapy tools for anxiety and depression"
+    },
+    "melon": {
+      "name": "Melon",
+      "website": "https://www.melonhealth.com",
+      "description": "Mental health and wellbeing app for New Zealanders"
+    }
+  }
+}
