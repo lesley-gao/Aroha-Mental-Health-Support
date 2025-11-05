@@ -7,10 +7,12 @@ import { PHQ9 } from '@/pages/PHQ9'
 import { History } from '@/pages/History'
 import { Settings } from '@/pages/Settings'
 import { Auth } from '@/pages/Auth'
+import Diary from '@/pages/Diary'
 import { type Locale } from '@/i18n/messages'
 import { getLanguage, getRecords } from '@/utils/storage'
 import { generatePDF } from '@/utils/pdf'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+import { ReaderIcon, ActivityLogIcon, GearIcon, LockClosedIcon, Pencil2Icon, ExitIcon } from '@radix-ui/react-icons'
 import './App.css'
 
 function AppContent() {
@@ -129,7 +131,18 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive('/')}
                     >
-                      <span className="material-symbols-outlined mr-2" aria-hidden>info</span> PHQ-9
+                      <ReaderIcon className="mr-2 h-4 w-4" aria-hidden /> PHQ-9
+                    </Button>
+                  </Link>
+                  <Link to="/diary">
+                    <Button
+                      variant="ghost"
+                      className={(isActive('/diary') ? 'bg-indigo-100 text-gray-900 shadow-sm ' : 'text-gray-700 hover:text-gray-900 ') + 'rounded-full px-4 py-2 focus-visible:ring-indigo-400'}
+                      aria-current={isActive('/diary') ? 'page' : undefined}
+                      role="tab"
+                      aria-selected={isActive('/diary')}
+                    >
+                      <Pencil2Icon className="mr-2 h-4 w-4" aria-hidden /> Diary
                     </Button>
                   </Link>
                   <Link to="/history">
@@ -140,7 +153,7 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive('/history')}
                     >
-                      <span className="material-symbols-outlined mr-2" aria-hidden>description</span> History
+                      <ActivityLogIcon className="mr-2 h-4 w-4" aria-hidden /> History
                     </Button>
                   </Link>
                   <Link to="/settings">
@@ -151,7 +164,7 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive('/settings')}
                     >
-                      <span className="material-symbols-outlined mr-2" aria-hidden>rule</span> Settings
+                      <GearIcon className="mr-2 h-4 w-4" aria-hidden /> Settings
                     </Button>
                   </Link>
                   <Link to="/privacy">
@@ -162,7 +175,7 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive('/privacy')}
                     >
-                      <span className="material-symbols-outlined mr-2" aria-hidden>vrpano</span> Privacy
+                      <LockClosedIcon className="mr-2 h-4 w-4" aria-hidden /> Privacy
                     </Button>
                   </Link>
                   <Button
@@ -170,7 +183,7 @@ function AppContent() {
                     onClick={handleLogout}
                     className="text-gray-700 hover:text-gray-900 rounded-full px-4 py-2 focus-visible:ring-indigo-400"
                   >
-                    <span className="material-symbols-outlined mr-2" aria-hidden>logout</span> Logout
+                    <ExitIcon className="mr-2 h-4 w-4" aria-hidden /> Logout
                   </Button>
                 </div>
               </div>
@@ -179,6 +192,7 @@ function AppContent() {
           <main id="main-content" className="py-8 px-4" role="main">
             <Routes>
               <Route path="/" element={<PHQ9 locale={locale} />} />
+              <Route path="/diary" element={<Diary locale={locale} />} />
               <Route path="/history" element={<History locale={locale} onExportPDF={handleExportPDF} />} />
               <Route path="/settings" element={<Settings locale={locale} onLocaleChange={handleLocaleChange} />} />
               <Route path="/privacy" element={<PrivacyPage locale={locale} />} />
