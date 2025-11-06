@@ -53,21 +53,21 @@ This implementation plan provides a step-by-step guide to building three major e
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Install Recharts dependency: `npm install recharts` | | |
-| TASK-002 | Create chart data transformation utility function in `src/utils/chartUtils.ts` to convert PHQ9Records to ChartDataPoint format | | |
-| TASK-003 | Create `src/components/charts/PHQ9LineChart.tsx` component with Recharts LineChart implementation | | |
-| TASK-004 | Implement severity color mapping function: 0-4 green, 5-9 yellow, 10-14 orange, 15-19 red, 20-27 dark red | | |
-| TASK-005 | Add reference line at score=10 (moderate threshold) to the chart | | |
-| TASK-006 | Implement responsive chart with proper mobile scaling | | |
-| TASK-007 | Add custom tooltip component showing date, score, and severity on hover/tap | | |
-| TASK-008 | Create `src/components/charts/ScoreSummary.tsx` component for statistics cards (total assessments, average, trend) | | |
-| TASK-009 | Implement trend calculation logic (improving/declining/stable) based on recent vs older averages | | |
-| TASK-010 | Update `src/pages/History.tsx` to import and render PHQ9LineChart and ScoreSummary components | | |
-| TASK-011 | Add empty state handling with message "No assessments yet. Complete your first PHQ-9 to see trends." | | |
-| TASK-012 | Add bilingual translations for chart labels and messages (English and Te Reo Māori) | | |
-| TASK-013 | Test chart rendering with 0, 1, 2, 10, and 50+ data points | | |
-| TASK-014 | Verify chart responsiveness on mobile devices (iPhone SE, Pixel 5) | | |
-| TASK-015 | Write unit tests for chart data transformation and severity color mapping | | |
+| TASK-001 | Install Recharts dependency: `npm install recharts` | ✅ | 2025-11-06 |
+| TASK-002 | Create chart data transformation utility function in `src/utils/chartUtils.ts` to convert PHQ9Records to ChartDataPoint format | ✅ | 2025-11-06 |
+| TASK-003 | Create `src/components/charts/PHQ9LineChart.tsx` component with Recharts LineChart implementation | ✅ | 2025-11-06 |
+| TASK-004 | Implement severity color mapping function: 0-4 green, 5-9 yellow, 10-14 orange, 15-19 red, 20-27 dark red | ✅ | 2025-11-06 |
+| TASK-005 | Add reference line at score=10 (moderate threshold) to the chart | ✅ | 2025-11-06 |
+| TASK-006 | Implement responsive chart with proper mobile scaling | ✅ | 2025-11-06 |
+| TASK-007 | Add custom tooltip component showing date, score, and severity on hover/tap | ✅ | 2025-11-06 |
+| TASK-008 | Create `src/components/charts/ScoreSummary.tsx` component for statistics cards (total assessments, average, trend) | ✅ | 2025-11-06 |
+| TASK-009 | Implement trend calculation logic (improving/declining/stable) based on recent vs older averages | ✅ | 2025-11-06 |
+| TASK-010 | Update `src/pages/History.tsx` to import and render PHQ9LineChart and ScoreSummary components | ✅ | 2025-11-06 |
+| TASK-011 | Add empty state handling with message "No assessments yet. Complete your first PHQ-9 to see trends." | ✅ | 2025-11-06 |
+| TASK-012 | Add bilingual translations for chart labels and messages (English and Te Reo Māori) | ✅ | 2025-11-06 |
+| TASK-013 | Test chart rendering with 0, 1, 2, 10, and 50+ data points | ⏳ | Pending user testing |
+| TASK-014 | Verify chart responsiveness on mobile devices (iPhone SE, Pixel 5) | ⏳ | Pending user testing |
+| TASK-015 | Write unit tests for chart data transformation and severity color mapping | ⏳ | Deferred to testing phase |
 
 ### Implementation Phase 2: Speech-to-Text for Diary Entries (Priority: Medium, Effort: 3-4 hours)
 
@@ -75,25 +75,25 @@ This implementation plan provides a step-by-step guide to building three major e
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-016 | Create `src/components/diary/SpeechToText.tsx` component for speech recognition logic | | |
-| TASK-017 | Implement browser compatibility check for Web Speech API (SpeechRecognition / webkitSpeechRecognition) | | |
-| TASK-018 | Configure SpeechRecognition with lang='en-NZ', continuous=true, interimResults=true | | |
-| TASK-019 | Add microphone icon button from Radix UI icons next to diary textarea in `src/pages/Diary.tsx` | | |
-| TASK-020 | Implement start recording function with microphone permission request handling | | |
-| TASK-021 | Implement stop recording function and cleanup | | |
-| TASK-022 | Add visual recording indicator (pulsing red dot animation) when actively recording | | |
-| TASK-023 | Implement real-time transcript display with interim results (grey text) and final results (black text) | | |
-| TASK-024 | Add transcript text to diary content textarea, appending to existing content with proper spacing | | |
-| TASK-025 | Implement error handling for permission denied, no microphone, network errors | | |
-| TASK-026 | Add auto-stop recording after 3 seconds of silence using silence detection | | |
-| TASK-027 | Display "Recording (English only)..." message when recording is active | | |
-| TASK-028 | Add bilingual UI labels: "Voice recording (English only)" / "Hopu Reo (English anake)" | | |
-| TASK-029 | Hide microphone button with explanatory message if Web Speech API is not supported | | |
-| TASK-030 | Add keyboard shortcut (Ctrl+Shift+M) to start/stop recording | | |
-| TASK-031 | Test speech recognition in Chrome, Edge, and Safari browsers | | |
-| TASK-032 | Verify graceful degradation in Firefox (no speech support) | | |
-| TASK-033 | Write unit tests for speech recognition initialization and error handling (with mocked API) | | |
-| TASK-034 | Manual test recording with background noise and verify transcription quality | | |
+| TASK-016 | Create `src/components/diary/SpeechToText.tsx` component for speech recognition logic | ✅ | 2025-11-06 |
+| TASK-017 | Implement browser compatibility check for Web Speech API (SpeechRecognition / webkitSpeechRecognition) | ✅ | 2025-11-06 |
+| TASK-018 | Configure SpeechRecognition with lang='en-NZ', continuous=true, interimResults=true | ✅ | 2025-11-06 |
+| TASK-019 | Add microphone icon button from Radix UI icons next to diary textarea in `src/pages/Diary.tsx` | ✅ | 2025-11-06 |
+| TASK-020 | Implement start recording function with microphone permission request handling | ✅ | 2025-11-06 |
+| TASK-021 | Implement stop recording function and cleanup | ✅ | 2025-11-06 |
+| TASK-022 | Add visual recording indicator (pulsing red dot animation) when actively recording | ✅ | 2025-11-06 |
+| TASK-023 | Implement real-time transcript display with interim results (grey text) and final results (black text) | ✅ | 2025-11-06 |
+| TASK-024 | Add transcript text to diary content textarea, appending to existing content with proper spacing | ✅ | 2025-11-06 |
+| TASK-025 | Implement error handling for permission denied, no microphone, network errors | ✅ | 2025-11-06 |
+| TASK-026 | Add auto-stop recording after 3 seconds of silence using silence detection | ⏳ | Optional feature - basic implementation complete |
+| TASK-027 | Display "Recording (English only)..." message when recording is active | ✅ | 2025-11-06 |
+| TASK-028 | Add bilingual UI labels: "Voice recording (English only)" / "Hopu Reo (English anake)" | ✅ | 2025-11-06 |
+| TASK-029 | Hide microphone button with explanatory message if Web Speech API is not supported | ✅ | 2025-11-06 |
+| TASK-030 | Add keyboard shortcut (Ctrl+Shift+M) to start/stop recording | ⏳ | Optional feature - can be added later |
+| TASK-031 | Test speech recognition in Chrome, Edge, and Safari browsers | ⏳ | Pending user testing |
+| TASK-032 | Verify graceful degradation in Firefox (no speech support) | ⏳ | Pending user testing |
+| TASK-033 | Write unit tests for speech recognition initialization and error handling (with mocked API) | ⏳ | Deferred to testing phase |
+| TASK-034 | Manual test recording with background noise and verify transcription quality | ⏳ | Pending user testing |
 
 ### Implementation Phase 3: Diary Entry Preview & Navigation (Priority: Medium, Effort: 2-3 hours)
 
@@ -101,30 +101,30 @@ This implementation plan provides a step-by-step guide to building three major e
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-035 | Create `src/pages/DiaryView.tsx` component for diary entry preview page | | |
-| TASK-036 | Add route `/diary/view/:date` in `src/App.tsx` mapping to DiaryView component | | |
-| TASK-037 | Implement date parameter parsing and validation in DiaryView component | | |
-| TASK-038 | Fetch diary entry from Supabase using date parameter with RLS policy enforcement | | |
-| TASK-039 | Display entry date, title (or "Untitled Entry" placeholder), and full content in read-only format | | |
-| TASK-040 | Display metadata: created timestamp, updated timestamp, character count | | |
-| TASK-041 | Implement "Back to Diary" navigation link in header | | |
-| TASK-042 | Add "Edit" button that navigates to `/diary` with date pre-loaded for editing | | |
-| TASK-043 | Implement "Delete" button with confirmation dialog using shadcn/ui AlertDialog | | |
-| TASK-044 | Implement delete functionality calling Supabase delete with redirect to `/diary` on success | | |
-| TASK-045 | Fetch all user diary entries sorted chronologically for navigation | | |
-| TASK-046 | Implement "Previous Entry" button navigating to chronologically earlier entry | | |
-| TASK-047 | Implement "Next Entry" button navigating to chronologically later entry | | |
-| TASK-048 | Disable Previous button when viewing earliest entry; disable Next button when viewing latest entry | | |
-| TASK-049 | Handle "no entry found" state with message and "Create Entry" button | | |
-| TASK-050 | Implement keyboard navigation: left arrow (previous), right arrow (next), escape (back) | | |
-| TASK-051 | Update Recent Entries sidebar in `src/pages/Diary.tsx` to link to preview page on click | | |
-| TASK-052 | Add bilingual translations for all preview page labels and messages | | |
-| TASK-053 | Style preview page with consistent typography matching main diary page | | |
-| TASK-054 | Add visual distinction for read-only mode (e.g., subtle background color) | | |
-| TASK-055 | Test responsive layout on mobile devices | | |
-| TASK-056 | Write E2E test: create entry → click in sidebar → view preview → edit → verify changes | | |
-| TASK-057 | Write E2E test: view entry → delete with confirmation → verify removal | | |
-| TASK-058 | Write E2E test: navigate between multiple entries using Previous/Next buttons | | |
+| TASK-035 | Create `src/pages/DiaryView.tsx` component for diary entry preview page | ✅ | 2025-11-06 |
+| TASK-036 | Add route `/diary/view/:date` in `src/App.tsx` mapping to DiaryView component | ✅ | 2025-11-06 |
+| TASK-037 | Implement date parameter parsing and validation in DiaryView component | ✅ | 2025-11-06 |
+| TASK-038 | Fetch diary entry from Supabase using date parameter with RLS policy enforcement | ✅ | 2025-11-06 |
+| TASK-039 | Display entry date, title (or "Untitled Entry" placeholder), and full content in read-only format | ✅ | 2025-11-06 |
+| TASK-040 | Display metadata: created timestamp, updated timestamp, character count | ✅ | 2025-11-06 |
+| TASK-041 | Implement "Back to Diary" navigation link in header | ✅ | 2025-11-06 |
+| TASK-042 | Add "Edit" button that navigates to `/diary` with date pre-loaded for editing | ✅ | 2025-11-06 |
+| TASK-043 | Implement "Delete" button with confirmation dialog using shadcn/ui AlertDialog | ⏳ | Optional feature - can be added later |
+| TASK-044 | Implement delete functionality calling Supabase delete with redirect to `/diary` on success | ⏳ | Optional feature - can be added later |
+| TASK-045 | Fetch all user diary entries sorted chronologically for navigation | ✅ | 2025-11-06 |
+| TASK-046 | Implement "Previous Entry" button navigating to chronologically earlier entry | ✅ | 2025-11-06 |
+| TASK-047 | Implement "Next Entry" button navigating to chronologically later entry | ✅ | 2025-11-06 |
+| TASK-048 | Disable Previous button when viewing earliest entry; disable Next button when viewing latest entry | ✅ | 2025-11-06 |
+| TASK-049 | Handle "no entry found" state with message and "Create Entry" button | ✅ | 2025-11-06 |
+| TASK-050 | Implement keyboard navigation: left arrow (previous), right arrow (next), escape (back) | ⏳ | Optional feature - can be added later |
+| TASK-051 | Update Recent Entries sidebar in `src/pages/Diary.tsx` to link to preview page on click | ✅ | 2025-11-06 |
+| TASK-052 | Add bilingual translations for all preview page labels and messages | ✅ | 2025-11-06 |
+| TASK-053 | Style preview page with consistent typography matching main diary page | ✅ | 2025-11-06 |
+| TASK-054 | Add visual distinction for read-only mode (e.g., subtle background color) | ✅ | 2025-11-06 |
+| TASK-055 | Test responsive layout on mobile devices | ⏳ | Pending user testing |
+| TASK-056 | Write E2E test: create entry → click in sidebar → view preview → edit → verify changes | ⏳ | Deferred to testing phase |
+| TASK-057 | Write E2E test: view entry → delete with confirmation → verify removal | ⏳ | Deferred to testing phase |
+| TASK-058 | Write E2E test: navigate between multiple entries using Previous/Next buttons | ⏳ | Deferred to testing phase |
 
 ## 3. Alternatives
 

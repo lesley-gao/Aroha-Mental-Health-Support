@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Save, Calendar } from 'lucide-react';
+import { Save, Calendar, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { SpeechToText } from '@/components/speech/SpeechToText';
+import type { Locale } from '@/i18n/messages';
 
 interface DiaryEntry {
   id: string;
@@ -17,7 +20,7 @@ interface DiaryEntry {
 }
 
 interface DiaryProps {
-  locale: string;
+  locale: Locale;
 }
 
 export default function Diary({ locale }: DiaryProps) {
@@ -27,6 +30,8 @@ export default function Diary({ locale }: DiaryProps) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const translations = {
     en: {
@@ -62,8 +67,13 @@ export default function Diary({ locale }: DiaryProps) {
   }, []);
 
   useEffect(() => {
+    // Check if there's a date query parameter
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      setSelectedDate(dateParam);
+    }
     loadEntryForDate(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, searchParams]);
 
   const loadEntries = async () => {
     setIsLoading(true);
@@ -145,6 +155,14 @@ export default function Diary({ locale }: DiaryProps) {
     }
   };
 
+  const handleSpeechTranscript = (transcript: string) => {
+    // Append the speech transcript to current entry content
+    setCurrentEntry(prev => {
+      const needsSpace = prev.length > 0 && !prev.endsWith(' ') && !prev.endsWith('\n');
+      return prev + (needsSpace ? ' ' : '') + transcript;
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
@@ -191,6 +209,14 @@ export default function Diary({ locale }: DiaryProps) {
               className="min-h-[400px] mb-4 resize-none"
             />
 
+            {/* Speech-to-Text Control */}
+            <div className="mb-4">
+              <SpeechToText 
+                onTranscript={handleSpeechTranscript}
+                locale={locale}
+              />
+            </div>
+
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">
                 {currentEntry.length} {t.characters}
@@ -219,31 +245,44 @@ export default function Diary({ locale }: DiaryProps) {
             ) : (
               <div className="space-y-2">
                 {entries.slice(0, 10).map((entry) => (
-                  <button
+                  <div
                     key={entry.id}
-                    onClick={() => setSelectedDate(entry.entry_date)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                    className={`w-full px-3 py-2 rounded-md text-sm transition-colors border ${
                       entry.entry_date === selectedDate
-                        ? 'bg-indigo-100 text-indigo-900 font-medium'
-                        : 'hover:bg-gray-100 text-gray-700'
+                        ? 'bg-indigo-50 border-indigo-200 text-indigo-900'
+                        : 'border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    <div className="font-medium">
-                      {new Date(entry.entry_date).toLocaleDateString(locale === 'mi' ? 'mi-NZ' : 'en-NZ', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                    {entry.title && (
-                      <div className="text-xs font-semibold text-gray-700 truncate mt-1">
-                        {entry.title}
+                    <button
+                      onClick={() => setSelectedDate(entry.entry_date)}
+                      className="w-full text-left mb-2"
+                    >
+                      <div className="font-medium">
+                        {new Date(entry.entry_date).toLocaleDateString(locale === 'mi' ? 'mi-NZ' : 'en-NZ', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
                       </div>
-                    )}
-                    <div className="text-xs text-gray-500 truncate">
-                      {entry.content.substring(0, 50)}...
-                    </div>
-                  </button>
+                      {entry.title && (
+                        <div className="text-xs font-semibold text-gray-700 truncate mt-1">
+                          {entry.title}
+                        </div>
+                      )}
+                      <div className="text-xs text-gray-500 truncate">
+                        {entry.content.substring(0, 50)}...
+                      </div>
+                    </button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/diary/${entry.entry_date}`)}
+                      className="w-full gap-2 text-xs"
+                    >
+                      <Eye className="w-3 h-3" />
+                      View Full Entry
+                    </Button>
+                  </div>
                 ))}
               </div>
             )}

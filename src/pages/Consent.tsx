@@ -51,9 +51,9 @@ export function ConsentModal({ locale, onConsent }: ConsentModalProps) {
           <DialogDescription className="text-base pt-4 space-y-4">
             <p>{messages.consentText}</p>
             
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
-              <h4 className="font-semibold text-blue-900 mb-2">What you should know:</h4>
-              <ul className="text-sm text-blue-800 space-y-2 list-disc list-inside">
+            <div className="bg-[#D1F08B] border-l-4 border-[#009490] p-4 my-4">
+              <h4 className="font-semibold mb-2">What you should know:</h4>
+              <ul className="text-sm space-y-2 list-disc list-inside">
                 <li>Your data never leaves this device automatically</li>
                 <li>No account or login required</li>
                 <li>You control all exports and sharing</li>

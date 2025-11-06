@@ -5,6 +5,10 @@ import { getMergedRecords, type PHQ9Record } from '@/utils/storage';
 import { getSeverityColor, getSeverityBgColor, type SeverityLevel } from '@/utils/severity';
 import { getMessages, type Locale } from '@/i18n/messages';
 import { FileDown, Calendar, TrendingUp } from 'lucide-react';
+import { PHQ9LineChart } from '@/components/charts/PHQ9LineChart';
+import { ScoreSummaryCard } from '@/components/charts/ScoreSummary';
+import { transformToChartData, calculateScoreSummary } from '@/utils/chartUtils';
+import type { PHQ9RecordDB } from '@/lib/supabase';
 
 interface HistoryProps {
   locale: Locale;
@@ -120,6 +124,36 @@ export function History({ locale, onExportPDF }: HistoryProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Charts Section - NEW */}
+          {records.length >= 2 && (
+            <div className="space-y-6">
+              {/* Score Summary */}
+              <ScoreSummaryCard 
+                summary={calculateScoreSummary(records as unknown as PHQ9RecordDB[])}
+                currentSeverity={records[0].severity}
+                locale={locale}
+              />
+
+              {/* Line Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{locale === 'en' ? 'Score Trend' : 'Ia Kaute'}</CardTitle>
+                  <CardDescription>
+                    {locale === 'en' 
+                      ? 'Your PHQ-9 scores over time' 
+                      : 'Ō kaute PHQ-9 i ngā wā katoa'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <PHQ9LineChart 
+                    data={transformToChartData(records as unknown as PHQ9RecordDB[])}
+                    locale={locale}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
           {/* Trend indicator */}
           {trend && (
             <Card className={`${

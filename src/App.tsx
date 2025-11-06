@@ -8,6 +8,7 @@ import { History } from '@/pages/History'
 import { Settings } from '@/pages/Settings'
 import { Auth } from '@/pages/Auth'
 import Diary from '@/pages/Diary'
+import { DiaryView } from '@/pages/DiaryView'
 import { type Locale } from '@/i18n/messages'
 import { getLanguage, getRecords } from '@/utils/storage'
 import { generatePDF } from '@/utils/pdf'
@@ -193,6 +194,7 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<PHQ9 locale={locale} />} />
               <Route path="/diary" element={<Diary locale={locale} />} />
+              <Route path="/diary/:date" element={<DiaryView locale={locale} />} />
               <Route path="/history" element={<History locale={locale} onExportPDF={handleExportPDF} />} />
               <Route path="/settings" element={<Settings locale={locale} onLocaleChange={handleLocaleChange} />} />
               <Route path="/privacy" element={<PrivacyPage locale={locale} />} />
