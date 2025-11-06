@@ -155,7 +155,7 @@ function getTranslations(locale: string) {
   const translations: Record<string, Translations> = {
     en: {
       title: 'Score Summary',
-      currentScore: 'Current Score',
+      currentScore: 'Latest Score',
       trend: 'Trend',
       averageScore: 'Average Score',
       previous: 'Previous',

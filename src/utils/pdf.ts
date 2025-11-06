@@ -11,7 +11,7 @@ import { type PHQ9Record } from './storage';
  * @param records - Array of PHQ9Record objects to include in the PDF
  * @param locale - Language locale for header text ('en' or 'mi')
  */
-export function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): void {
+export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): Promise<void> {
   if (records.length === 0) {
     alert(locale === 'en' ? 'No records to export' : 'Kāore he rēkōtanga hei kaweake');
     return;
@@ -30,6 +30,48 @@ export function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): 
   const lineHeight = 7;
   let yPosition = margin;
 
+  // Load and add logo to top right corner
+  try {
+    const logoImg = new Image();
+    logoImg.src = '/logo.png';
+    await new Promise((resolve, reject) => {
+      logoImg.onload = resolve;
+      logoImg.onerror = reject;
+    });
+    
+    // Calculate dimensions for cover fit (maintain aspect ratio, fill the space)
+    const logoBoxSize = 12; // 12mm x 12mm box (reduced from 20mm)
+    const logoY = margin - 5; // Move up by 5mm
+    
+    const imgWidth = logoImg.naturalWidth;
+    const imgHeight = logoImg.naturalHeight;
+    const imgAspectRatio = imgWidth / imgHeight;
+    const boxAspectRatio = 1; // Square box
+    
+    let finalWidth, finalHeight, offsetX = 0, offsetY = 0;
+    
+    // Cover fit: scale to cover the entire box
+    if (imgAspectRatio > boxAspectRatio) {
+      // Image is wider - fit to height
+      finalHeight = logoBoxSize;
+      finalWidth = finalHeight * imgAspectRatio;
+      offsetX = -(finalWidth - logoBoxSize) / 2; // Center horizontally
+    } else {
+      // Image is taller - fit to width
+      finalWidth = logoBoxSize;
+      finalHeight = finalWidth / imgAspectRatio;
+      offsetY = -(finalHeight - logoBoxSize) / 2; // Center vertically
+    }
+    
+    // Position logo so its right edge aligns with page right margin
+    const logoX = pageWidth - margin - finalWidth - offsetX;
+    
+    // Add image without border (no clipping rectangle drawn)
+    doc.addImage(logoImg, 'PNG', logoX + offsetX, logoY + offsetY, finalWidth, finalHeight);
+  } catch (error) {
+    console.warn('Failed to load logo for PDF:', error);
+  }
+
   // Helper to check if we need a new page
   const checkPageBreak = (requiredSpace: number = 10) => {
     if (yPosition + requiredSpace > pageHeight - margin) {
@@ -45,9 +87,8 @@ export function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): 
   doc.setFont('helvetica', 'bold');
   doc.text(
     locale === 'en' ? 'PHQ-9 Assessment Summary' : 'Whakarāpopoto Aromatawai PHQ-9',
-    pageWidth / 2,
-    yPosition,
-    { align: 'center' }
+    margin,
+    yPosition
   );
   yPosition += 12;
 
@@ -62,9 +103,8 @@ export function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): 
   });
   doc.text(
     locale === 'en' ? `Exported: ${exportDate}` : `Kawea: ${exportDate}`,
-    pageWidth / 2,
-    yPosition,
-    { align: 'center' }
+    margin,
+    yPosition
   );
   yPosition += 10;
 
@@ -129,10 +169,10 @@ export function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   const col1 = margin;
-  const col2 = margin + 15;
-  const col3 = margin + 75;
-  const col4 = margin + 100;
-  const col5 = margin + 145;
+  const col2 = margin + 10;
+  const col3 = margin + 60;
+  const col4 = margin + 80;
+  const col5 = margin + 120;
 
   doc.text('#', col1, yPosition);
   doc.text(locale === 'en' ? 'Date' : 'Rā', col2, yPosition);

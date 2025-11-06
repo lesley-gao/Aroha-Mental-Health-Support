@@ -8,7 +8,6 @@ import { FileDown, Calendar, TrendingUp } from 'lucide-react';
 import { PHQ9LineChart } from '@/components/charts/PHQ9LineChart';
 import { ScoreSummaryCard } from '@/components/charts/ScoreSummary';
 import { transformToChartData, calculateScoreSummary } from '@/utils/chartUtils';
-import type { PHQ9RecordDB } from '@/lib/supabase';
 
 interface HistoryProps {
   locale: Locale;
@@ -129,7 +128,7 @@ export function History({ locale, onExportPDF }: HistoryProps) {
             <div className="space-y-6">
               {/* Score Summary */}
               <ScoreSummaryCard 
-                summary={calculateScoreSummary(records as unknown as PHQ9RecordDB[])}
+                summary={calculateScoreSummary(records)}
                 currentSeverity={records[0].severity}
                 locale={locale}
               />
@@ -146,7 +145,7 @@ export function History({ locale, onExportPDF }: HistoryProps) {
                 </CardHeader>
                 <CardContent>
                   <PHQ9LineChart 
-                    data={transformToChartData(records as unknown as PHQ9RecordDB[])}
+                    data={transformToChartData(records)}
                     locale={locale}
                   />
                 </CardContent>

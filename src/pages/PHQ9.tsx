@@ -136,7 +136,7 @@ export function PHQ9({ locale }: PHQ9Props) {
             <div className="bg-gray-50 border rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">
-                  Current Score:
+                  Latest Score:
                 </span>
                 <span className={`text-lg font-bold ${getSeverityColor(severity)}`}>
                   {currentTotal} / 27

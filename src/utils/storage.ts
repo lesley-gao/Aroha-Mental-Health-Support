@@ -211,13 +211,15 @@ export function setCloudSyncEnabled(enabled: boolean): void {
 async function getUserId(): Promise<string | null> {
   try {
     if (!supabase) {
+      console.warn('⚠️ Supabase client not initialized');
       return null;
     }
     
     const { data: { user } } = await supabase.auth.getUser();
+    console.log('👤 Current user:', user?.id, user?.email);
     return user?.id || null;
   } catch (error) {
-    console.error('Error getting user ID:', error);
+    console.error('❌ Error getting user ID:', error);
     return null;
   }
 }
@@ -270,7 +272,9 @@ export async function fetchRecordsFromSupabase(): Promise<PHQ9Record[]> {
 
   try {
     const userId = await getUserId();
+    console.log('🔍 Fetching PHQ-9 records for user:', userId);
     if (!userId) {
+      console.warn('⚠️ No userId found, cannot fetch PHQ-9 records');
       return [];
     }
 
@@ -281,8 +285,14 @@ export async function fetchRecordsFromSupabase(): Promise<PHQ9Record[]> {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching records from Supabase:', error);
+      console.error('❌ Error fetching records from Supabase:', error);
       return [];
+    }
+
+    console.log('✅ PHQ-9 records fetched:', data?.length || 0, 'records');
+    console.log('📊 First record:', data?.[0]);
+    if (data?.[0]) {
+      console.log('📅 First record created_at:', data[0].created_at, 'type:', typeof data[0].created_at);
     }
 
     // Convert DB records to PHQ9Record format
@@ -343,14 +353,19 @@ export async function syncAllRecordsToSupabase(): Promise<void> {
  * @returns Promise resolving to merged array of PHQ9Record
  */
 export async function getMergedRecords(): Promise<PHQ9Record[]> {
+  console.log('🔄 getMergedRecords() called');
   try {
     const localRecords = await getRecords();
+    console.log('💾 Local records:', localRecords.length);
     
     if (!isCloudSyncEnabled()) {
+      console.log('☁️ Cloud sync disabled, using local only');
       return localRecords;
     }
 
+    console.log('☁️ Cloud sync enabled, fetching from Supabase...');
     const cloudRecords = await fetchRecordsFromSupabase();
+    console.log('☁️ Cloud records:', cloudRecords.length);
     
     // Merge and deduplicate by createdAt
     const recordMap = new Map<string, PHQ9Record>();
@@ -359,11 +374,13 @@ export async function getMergedRecords(): Promise<PHQ9Record[]> {
       recordMap.set(record.createdAt, record);
     });
     
-    // Sort by createdAt descending
-    return Array.from(recordMap.values())
+    const mergedRecords = Array.from(recordMap.values())
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    console.log('✅ Merged records:', mergedRecords.length);
+    return mergedRecords;
   } catch (error) {
-    console.error('Error merging records:', error);
+    console.error('❌ Error merging records:', error);
     return await getRecords(); // Fallback to local only
   }
 }

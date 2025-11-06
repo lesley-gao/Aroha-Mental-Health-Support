@@ -3,7 +3,7 @@
  * Transforms PHQ-9 records into formats suitable for Recharts components
  */
 
-import type { PHQ9RecordDB } from '../lib/supabase';
+import type { PHQ9Record } from './storage';
 
 // Type definitions for chart data
 export interface ChartDataPoint {
@@ -25,21 +25,21 @@ export interface ScoreSummary {
  * Transform PHQ-9 records into chart-ready data points
  * Sorts by date ascending (oldest first) for proper line chart display
  */
-export function transformToChartData(records: PHQ9RecordDB[]): ChartDataPoint[] {
+export function transformToChartData(records: PHQ9Record[]): ChartDataPoint[] {
   if (!records || records.length === 0) {
     return [];
   }
 
   // Sort by date ascending
   const sorted = [...records].sort(
-    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
   return sorted.map((record) => ({
-    date: record.created_at,
+    date: record.createdAt,
     score: record.total,
     severity: record.severity,
-    formattedDate: formatChartDate(record.created_at),
+    formattedDate: formatChartDate(record.createdAt),
   }));
 }
 
@@ -50,6 +50,13 @@ export function transformToChartData(records: PHQ9RecordDB[]): ChartDataPoint[] 
  */
 export function formatChartDate(dateString: string): string {
   const date = new Date(dateString);
+  
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    console.error('❌ Invalid date string:', dateString);
+    return 'Invalid Date';
+  }
+  
   const month = date.toLocaleDateString('en-US', { month: 'short' });
   const day = date.getDate();
   return `${month} ${day}`;
@@ -59,7 +66,7 @@ export function formatChartDate(dateString: string): string {
  * Calculate score summary statistics
  * Includes current, previous, average, and trend analysis
  */
-export function calculateScoreSummary(records: PHQ9RecordDB[]): ScoreSummary {
+export function calculateScoreSummary(records: PHQ9Record[]): ScoreSummary {
   if (!records || records.length === 0) {
     return {
       current: null,
@@ -72,7 +79,7 @@ export function calculateScoreSummary(records: PHQ9RecordDB[]): ScoreSummary {
 
   // Sort by date descending to get most recent first
   const sorted = [...records].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   const current = sorted[0].total;
@@ -147,9 +154,9 @@ export function getSeverityLabel(severity: string): string {
  * Useful for "Last 30 days", "Last 90 days" filters
  */
 export function filterRecordsByDateRange(
-  records: PHQ9RecordDB[],
+  records: PHQ9Record[],
   days: number
-): PHQ9RecordDB[] {
+): PHQ9Record[] {
   if (!records || records.length === 0) {
     return [];
   }
@@ -158,7 +165,7 @@ export function filterRecordsByDateRange(
   cutoffDate.setDate(cutoffDate.getDate() - days);
 
   return records.filter(
-    (record) => new Date(record.created_at) >= cutoffDate
+    (record) => new Date(record.createdAt) >= cutoffDate
   );
 }
 
@@ -166,7 +173,7 @@ export function filterRecordsByDateRange(
  * Group records by month for monthly averages
  * Useful for long-term trend analysis
  */
-export function groupRecordsByMonth(records: PHQ9RecordDB[]): {
+export function groupRecordsByMonth(records: PHQ9Record[]): {
   month: string;
   average: number;
   count: number;
@@ -178,7 +185,7 @@ export function groupRecordsByMonth(records: PHQ9RecordDB[]): {
   const grouped = new Map<string, { sum: number; count: number }>();
 
   records.forEach((record) => {
-    const date = new Date(record.created_at);
+    const date = new Date(record.createdAt);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
     const existing = grouped.get(monthKey) || { sum: 0, count: 0 };
