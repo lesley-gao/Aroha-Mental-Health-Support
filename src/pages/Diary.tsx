@@ -4,9 +4,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Save, Calendar, Eye } from 'lucide-react';
+import { Save, Calendar, Eye, X, ArrowDown } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { SpeechToText } from '@/components/speech/SpeechToText';
+import { BrowserSpeechToText } from '@/components/speech/BrowserSpeechToText';
 import type { Locale } from '@/i18n/messages';
 
 interface DiaryEntry {
@@ -27,6 +27,7 @@ export default function Diary({ locale }: DiaryProps) {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [currentTitle, setCurrentTitle] = useState('');
   const [currentEntry, setCurrentEntry] = useState('');
+  const [aiSummary, setAiSummary] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -42,9 +43,14 @@ export default function Diary({ locale }: DiaryProps) {
       placeholder: 'Write your thoughts here...',
       save: 'Save Entry',
       saved: 'Entry Saved',
+      clear: 'Clear',
+      clearConfirm: 'Are you sure you want to clear this entry?',
       noEntries: 'No entries yet. Start writing!',
       selectDate: 'Select Date',
-      characters: 'characters'
+      characters: 'characters',
+      aiSummary: 'AI Summary',
+      clearSummary: 'Clear',
+      insertSummary: 'Insert'
     },
     mi: {
       title: 'Taku Pukapuka',
@@ -54,9 +60,14 @@ export default function Diary({ locale }: DiaryProps) {
       placeholder: 'Tuhia ō whakaaro ki konei...',
       save: 'Tiaki Tuhinga',
       saved: 'Kua Tiakina',
+      clear: 'Whakakore',
+      clearConfirm: 'Kei te tino hiahia koe ki te whakakore i tēnei tuhinga?',
       noEntries: 'Kāore anō kia tuhia. Tīmataria!',
       selectDate: 'Kōwhiri Rā',
-      characters: 'reta'
+      characters: 'reta',
+      aiSummary: 'Whakarāpopoto AI',
+      clearSummary: 'Whakakore',
+      insertSummary: 'Whakauru'
     }
   };
 
@@ -110,9 +121,13 @@ export default function Diary({ locale }: DiaryProps) {
         .select('*')
         .eq('user_id', user.id)
         .eq('entry_date', date)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = not found
+      if (error) {
+        console.error('Error loading diary entry:', error);
+        throw error;
+      }
+      
       setCurrentTitle(data?.title || '');
       setCurrentEntry(data?.content || '');
     } catch (error) {
@@ -146,6 +161,11 @@ export default function Diary({ locale }: DiaryProps) {
       
       // Reload entries to update the list
       await loadEntries();
+      
+      // Clear the form fields and AI summary after successful save
+      setCurrentTitle('');
+      setCurrentEntry('');
+      setAiSummary('');
     } catch (error) {
       console.error('Error saving diary entry:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -161,6 +181,35 @@ export default function Diary({ locale }: DiaryProps) {
       const needsSpace = prev.length > 0 && !prev.endsWith(' ') && !prev.endsWith('\n');
       return prev + (needsSpace ? ' ' : '') + transcript;
     });
+  };
+
+  const handleClearEntry = () => {
+    if (currentEntry.trim() || currentTitle.trim()) {
+      if (window.confirm(t.clearConfirm)) {
+        setCurrentTitle('');
+        setCurrentEntry('');
+        setAiSummary('');
+      }
+    }
+  };
+
+  const handleInsertSummary = () => {
+    if (aiSummary) {
+      // Split summary into main text and emotions
+      const parts = aiSummary.split(/\n\n💭 Emotions:\s*/);
+      const summaryText = parts[0].trim();
+      const emotions = parts[1] || '';
+      
+      setCurrentEntry(prev => {
+        const needsSpace = prev.length > 0 && !prev.endsWith('\n');
+        const separator = '\n--------------------------------\n';
+        const header = '✨ AI Summary:\n';
+        const emotionLine = emotions ? `\n💭 Emotion: ${emotions}` : '';
+        
+        return prev + (needsSpace ? '\n' : '') + separator + header + summaryText + emotionLine;
+      });
+      setAiSummary(''); // Clear summary after inserting
+    }
   };
 
   return (
@@ -209,26 +258,69 @@ export default function Diary({ locale }: DiaryProps) {
               className="min-h-[400px] mb-4 resize-none"
             />
 
-            {/* Speech-to-Text Control */}
+            {/* Browser Speech-to-Text Control (Fallback) */}
             <div className="mb-4">
-              <SpeechToText 
+              <BrowserSpeechToText 
                 onTranscript={handleSpeechTranscript}
                 locale={locale}
+                showSummary={true}
+                onSummary={(summary: string) => {
+                  setAiSummary(summary);
+                  console.log('AI Summary:', summary);
+                }}
               />
             </div>
+
+            {/* AI Summary Display */}
+            {aiSummary && (
+              <div className="mb-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-sm font-medium text-indigo-900">✨ {t.aiSummary}</span>
+                  <div className="ml-auto flex gap-2">
+                    <button
+                      onClick={handleInsertSummary}
+                      className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                    >
+                      <ArrowDown className="w-3 h-3" />
+                      {t.insertSummary}
+                    </button>
+                    <button
+                      onClick={() => setAiSummary('')}
+                      className="text-xs text-indigo-600 hover:text-indigo-800"
+                    >
+                      {t.clearSummary}
+                    </button>
+                  </div>
+                </div>
+                <div className="text-sm text-indigo-800 whitespace-pre-line">
+                  {aiSummary}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">
                 {currentEntry.length} {t.characters}
               </span>
-              <Button
-                onClick={saveEntry}
-                disabled={isSaving || !currentEntry.trim()}
-                className="flex items-center"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? t.saved : t.save}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleClearEntry}
+                  disabled={!currentEntry.trim() && !currentTitle.trim()}
+                  variant="outline"
+                  className="flex items-center"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  {t.clear}
+                </Button>
+                <Button
+                  onClick={saveEntry}
+                  disabled={isSaving || !currentEntry.trim()}
+                  className="flex items-center"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {isSaving ? t.saved : t.save}
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
