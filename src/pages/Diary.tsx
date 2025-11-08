@@ -13,7 +13,7 @@ import {
   TimelineTitle, 
   TimelineDescription 
 } from '@/components/ui/timeline';
-import { Save, Calendar, Eye, X, ArrowDown } from 'lucide-react';
+import { Save, Calendar, X, ArrowDown } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { BrowserSpeechToText } from '@/components/speech/BrowserSpeechToText';
 import type { Locale } from '@/i18n/messages';
@@ -59,7 +59,8 @@ export default function Diary({ locale }: DiaryProps) {
       characters: 'characters',
       aiSummary: 'AI Summary',
       clearSummary: 'Clear',
-      insertSummary: 'Insert'
+      insertSummary: 'Insert',
+      showAllDiaries: 'Show All Diaries'
     },
     mi: {
       title: 'Taku Pukapuka',
@@ -76,7 +77,8 @@ export default function Diary({ locale }: DiaryProps) {
       characters: 'reta',
       aiSummary: 'Whakarāpopoto AI',
       clearSummary: 'Whakakore',
-      insertSummary: 'Whakauru'
+      insertSummary: 'Whakauru',
+      showAllDiaries: 'Whakaatu Ngā Pukapuka Katoa'
     }
   };
 
@@ -232,7 +234,7 @@ export default function Diary({ locale }: DiaryProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main writing area */}
         <div className="lg:col-span-2">
-          <Card className="p-6">
+          <Card className="p-6 bg-white/30">
             <div className="mb-4 flex items-center justify-between">
               <label htmlFor="entry-date" className="text-base font-medium text-gray-700 flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -289,14 +291,14 @@ export default function Diary({ locale }: DiaryProps) {
                   <div className="ml-auto flex gap-2">
                     <button
                       onClick={handleInsertSummary}
-                      className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                      className="text-xs text-indigo-500 hover:text-indigo-800 flex items-center gap-1"
                     >
                       <ArrowDown className="w-3 h-3" />
                       {t.insertSummary}
                     </button>
                     <button
                       onClick={() => setAiSummary('')}
-                      className="text-xs text-indigo-600 hover:text-indigo-800"
+                      className="text-xs text-indigo-500 hover:text-indigo-800"
                     >
                       {t.clearSummary}
                     </button>
@@ -337,7 +339,7 @@ export default function Diary({ locale }: DiaryProps) {
 
         {/* Recent entries sidebar - Timeline */}
         <div className="lg:col-span-1">
-          <Card className="p-6">
+          <Card className="p-6 bg-white/30">
             <h2 className="text-lg font-semibold mb-6 text-gray-900">Recent Entries</h2>
             
             {isLoading ? (
@@ -345,44 +347,51 @@ export default function Diary({ locale }: DiaryProps) {
             ) : entries.length === 0 ? (
               <div className="text-center text-gray-500 py-4 text-base">{t.noEntries}</div>
             ) : (
-              <Timeline>
-                {entries.slice(0, 10).map((entry) => (
-                  <TimelineItem key={entry.id} isActive={entry.entry_date === selectedDate}>
-                    <TimelineDot isActive={entry.entry_date === selectedDate} />
-                    <TimelineContent>
-                      <button
-                        onClick={() => setSelectedDate(entry.entry_date)}
-                        className="w-full text-left group"
-                      >
-                        <TimelineTime className={entry.entry_date === selectedDate ? 'text-indigo-600' : ''}>
-                          {new Date(entry.entry_date).toLocaleDateString(locale === 'mi' ? 'mi-NZ' : 'en-NZ', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </TimelineTime>
-                        {entry.title && (
-                          <TimelineTitle className="mt-1 truncate group-hover:text-indigo-600 transition-colors">
-                            {entry.title}
-                          </TimelineTitle>
-                        )}
-                        <TimelineDescription className="mt-1 line-clamp-2">
-                          {entry.content.substring(0, 80)}...
-                        </TimelineDescription>
-                      </button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/diary/${entry.entry_date}`)}
-                        className="w-full gap-2 text-xs mt-2"
-                      >
-                        <Eye className="w-3 h-3" />
-                        View Full
-                      </Button>
-                    </TimelineContent>
-                  </TimelineItem>
-                ))}
-              </Timeline>
+              <>
+                <Timeline>
+                  {entries.slice(0, 5).map((entry) => (
+                    <TimelineItem key={entry.id} isActive={entry.entry_date === selectedDate}>
+                      <TimelineDot isActive={entry.entry_date === selectedDate} />
+                      <TimelineContent >
+                        <button
+                          onClick={() => setSelectedDate(entry.entry_date)}
+                          className="w-full text-left group"
+                        >
+                          <TimelineTime className={entry.entry_date === selectedDate ? 'text-indigo-600' : ''}>
+                            {new Date(entry.entry_date).toLocaleDateString(locale === 'mi' ? 'mi-NZ' : 'en-NZ', {
+                              weekday: 'short',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </TimelineTime>
+                          {entry.title && (
+                            <TimelineTitle className="mt-1 truncate group-hover:text-indigo-500 transition-colors">
+                              {entry.title}
+                            </TimelineTitle>
+                          )}
+                          <TimelineDescription className="mt-1 line-clamp-2">
+                            {entry.content.substring(0, 80)}...
+                          </TimelineDescription>
+                        </button>
+                        <button
+                          onClick={() => navigate(`/diary/${entry.entry_date}`)}
+                          className="text-sm text-right text-indigo-500 hover:text-indigo-800 hover:underline mt-2"
+                        >
+                          View Full
+                        </button>
+                      </TimelineContent>
+                    </TimelineItem>
+                  ))}
+                </Timeline>
+                {entries.length > 5 && (
+                  <button
+                    onClick={() => navigate('/diary/all')}
+                    className="text-sm text-indigo-500 hover:text-indigo-800 hover:underline mt-4 w-full text-center"
+                  >
+                    {t.showAllDiaries}
+                  </button>
+                )}
+              </>
             )}
           </Card>
         </div>

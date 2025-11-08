@@ -18,6 +18,7 @@ import { Settings } from "./pages/Settings";
 import { Auth } from "./pages/Auth";
 import Diary from "./pages/Diary";
 import { DiaryView } from "./pages/DiaryView";
+import { AllDiaries } from "./pages/AllDiaries";
 import { type Locale } from "./i18n/messages";
 import { getLanguage, getMergedRecords } from "./utils/storage";
 import { generatePDF } from "./utils/pdf";
@@ -166,7 +167,7 @@ function AppContent() {
                 aria-label="Main navigation"
               >
                 <div
-                  className="inline-flex items-center gap-2 rounded-full bg-indigo-50/80 backdrop-blur px-2 py-2 ring-1 ring-indigo-100 shadow-sm"
+                  className="inline-flex items-center gap-2 rounded-full backdrop-blur px-2 py-2 ring-2 ring-indigo-200 shadow-lg"
                   role="tablist"
                   aria-label="Section tabs"
                 >
@@ -284,6 +285,10 @@ function AppContent() {
               <Route path="/" element={<Home locale={locale} />} />
               <Route path="/phq9" element={<PHQ9 locale={locale} />} />
               <Route path="/diary" element={<Diary locale={locale} />} />
+              <Route
+                path="/diary/all"
+                element={<AllDiaries locale={locale} />}
+              />
               <Route
                 path="/diary/:date"
                 element={<DiaryView locale={locale} />}

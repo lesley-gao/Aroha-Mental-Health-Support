@@ -48,7 +48,7 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
         <div className="flex-1">
           <div className="max-w-md w-full mx-auto">
             {/* Segmented tabs (fixed at top within left column) */}
-            <div className="mb-8 sticky top-6 z-10 w-max flex items-center gap-2 rounded-full bg-indigo-50/80 ring-1 ring-indigo-100 p-1 backdrop-blur supports-[backdrop-filter]:bg-indigo-50/60">
+            <div className="mb-8 sticky top-6 z-10 w-max flex items-center gap-2 rounded-full bg-indigo-50/80 ring-2 ring-indigo-100 shadow-lg p-1 backdrop-blur supports-[backdrop-filter]:bg-indigo-50/60">
               <Button
                 variant="ghost"
                 onClick={() => setActive("login")}

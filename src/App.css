@@ -18,7 +18,7 @@
 }
 
 .app-nav button {
-  @apply px-4 py-2 bg-transparent border-none border-b-2 border-transparent cursor-pointer text-base text-gray-600 transition-all;
+  @apply px-4 py-2 bg-white/30 border-none border-b-2 border-transparent cursor-pointer text-base text-gray-600 transition-all;
 }
 
 .app-nav button:hover {

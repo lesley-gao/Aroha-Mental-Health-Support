@@ -87,7 +87,7 @@ export function PHQ9({ locale }: PHQ9Props) {
 
   return (
     <div className="container mx-auto max-w-3xl py-8 px-4">
-      <Card>
+      <Card className="bg-white/30">
         <CardHeader>
           <CardTitle className="text-2xl">{messages.phq9Title}</CardTitle>
           <CardDescription className="text-base">
@@ -96,7 +96,7 @@ export function PHQ9({ locale }: PHQ9Props) {
         </CardHeader>
         <CardContent className="space-y-8">
           {/* Disclaimer */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4   text-blue-900">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4  text-blue-900">
             {messages.disclaimer}
           </div>
 
@@ -133,7 +133,7 @@ export function PHQ9({ locale }: PHQ9Props) {
 
           {/* Score Preview */}
           {hasAnswers && (
-            <div className="bg-gray-50 border rounded-lg p-4">
+            <div className="bg-white/30 border rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <span className="  font-medium text-gray-700">
                   Latest Score:
@@ -175,7 +175,7 @@ export function PHQ9({ locale }: PHQ9Props) {
 
           {/* Show nudge or escalation after submission preview */}
           {isFormValid() && shouldShowNudge(currentTotal) && (
-            <Card className="bg-amber-50 border-amber-200">
+            <Card className="bg-amber-50">
               <CardContent className="pt-6">
                 <div className="flex gap-3">
                   <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />

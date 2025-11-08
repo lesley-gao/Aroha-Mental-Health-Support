@@ -156,11 +156,11 @@ export function DiaryView({ locale }: DiaryViewProps) {
 
   if (!entry) {
     return (
-      <div className="container mx-auto max-w-4xl py-8 px-4">
+      <div className="container mx-auto max-w-4xl py-8 px-4 ">
         <Card>
           <CardHeader>
-            <Button variant="ghost" onClick={() => navigate('/diary')} className="w-fit">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <Button variant="default" onClick={() => navigate('/diary')} className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
               {t.backToDiary}
             </Button>
           </CardHeader>
@@ -177,11 +177,11 @@ export function DiaryView({ locale }: DiaryViewProps) {
 
   return (
     <div className="container mx-auto max-w-4xl py-8 px-4">
-      <Card>
+      <Card className="bg-white/30">
         <CardHeader>
           {/* Navigation Bar */}
-          <div className="flex items-center justify-between mb-4">
-            <Button variant="ghost" onClick={() => navigate('/diary')} className="gap-2">
+          <div className="flex items-center justify-between mb-12">
+            <Button variant="default" onClick={() => navigate('/diary')} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
               {t.backToDiary}
             </Button>

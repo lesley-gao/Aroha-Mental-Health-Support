@@ -137,7 +137,7 @@ export function PrivacyPage({ locale }: PrivacyPageProps) {
       </Card>
 
       {/* Delete Data Card */}
-      <Card className="border-red-200">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-700">
             <Trash2 className="h-5 w-5" />

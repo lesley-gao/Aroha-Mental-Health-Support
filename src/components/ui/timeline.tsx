@@ -50,7 +50,7 @@ const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
     return (
       <li
         ref={ref}
-        className={cn('mb-6 ml-6 last:mb-0', className)}
+        className={cn('mb-8 ml-6 last:mb-0 p-3 rounded-lg transition-colors hover:bg-white/60', className)}
         {...props}
       >
         {children}
