@@ -26,9 +26,9 @@ export function Home({ locale }: HomeProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center lg:mb-30 mb-20">
           {/* Hero Image - Left */}
           <div className="order-2 md:order-1">
-            <img 
-              src="/hero-image.png" 
-              alt="Mental wellness illustration" 
+            <img
+              src="/hero-image.png"
+              alt="Mental wellness illustration"
               className="w-full h-auto rounded-3xl"
             />
           </div>
@@ -58,8 +58,8 @@ export function Home({ locale }: HomeProps) {
           {/* PHQ-9 Assessment */}
           <Card className="p-6 md:p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30">
             <div className="relative mb-6">
-              <div className="absolute inset-0 bg-indigo-600 rounded-2xl blur-xl opacity-20"></div>
-              <div className="relative bg-indigo-600 w-14 h-14 rounded-2xl flex items-center justify-center">
+              <div className="absolute inset-0 bg-teal-600 rounded-2xl blur-xl opacity-20"></div>
+              <div className="relative bg-teal-600 w-14 h-14 rounded-2xl flex items-center justify-center">
                 <ReaderIcon className="h-7 w-7 text-white" />
               </div>
             </div>
@@ -73,7 +73,7 @@ export function Home({ locale }: HomeProps) {
               📋
             </div>
             <Link to="/phq9">
-              <Button className="w-full gap-2" size="lg">
+              <Button variant="teal" className="w-full gap-2" size="lg">
                 {t.takeAssessment}
                 <LightningBoltIcon className="h-4 w-4" />
               </Button>
@@ -83,8 +83,8 @@ export function Home({ locale }: HomeProps) {
           {/* Diary Feature */}
           <Card className="p-6 md:p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30">
             <div className="relative mb-6">
-              <div className="absolute inset-0 bg-purple-600 rounded-2xl blur-xl opacity-20"></div>
-              <div className="relative bg-purple-600 w-14 h-14 rounded-2xl flex items-center justify-center">
+              <div className="absolute inset-0 bg-teal-600 rounded-2xl blur-xl opacity-20"></div>
+              <div className="relative bg-teal-600 w-14 h-14 rounded-2xl flex items-center justify-center">
                 <Pencil2Icon className="h-7 w-7 text-white" />
               </div>
             </div>
@@ -98,7 +98,7 @@ export function Home({ locale }: HomeProps) {
               ✍️
             </div>
             <Link to="/diary">
-              <Button className="w-full gap-2" size="lg">
+              <Button variant="teal" className="w-full gap-2" size="lg">
                 {t.startWriting}
                 <Pencil2Icon className="h-4 w-4" />
               </Button>
@@ -123,7 +123,7 @@ export function Home({ locale }: HomeProps) {
               📊
             </div>
             <Link to="/history">
-              <Button className="w-full gap-2" size="lg">
+              <Button variant="teal" className="w-full gap-2" size="lg">
                 {t.viewProgress}
                 <ActivityLogIcon className="h-4 w-4" />
               </Button>
@@ -185,14 +185,19 @@ export function Home({ locale }: HomeProps) {
             </div>
             <div className="flex gap-4 bg-gradient-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30  backdrop-blur-sm rounded-xl p-6 hover:bg-white/90 transition-colors shadow-md">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-pink-600 bg-white/60 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-white/60 rounded-full flex items-center justify-center">
                   <ReaderIcon className="w-6 h-6 text-[#009490]" />
                 </div>
               </div>
               <div>
-                <h4 className="font-semibold text-lg mb-2 text-gray-900">
-                  {t.nzFocusedTitle}
-                </h4>
+                <div className="flex items-center gap-2 mb-2">
+                  <h4 className="font-semibold text-lg text-gray-900">
+                    {t.nzFocusedTitle}
+                  </h4>
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-gray-700 border border-white">
+                    Coming soon
+                  </span>
+                </div>
                 <p className="text-gray-700 text-sm leading-relaxed">
                   {t.nzFocusedDesc}
                 </p>
@@ -208,8 +213,8 @@ export function Home({ locale }: HomeProps) {
           </h2>
           <p className="text-gray-600 mb-12 text-lg">{t.quickStartSubtitle}</p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-20 max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow w-full md:w-64 h-24">
-              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
+            <div className="flex items-center gap-4 bg-white/30 p-6 rounded-2xl shadow-md hover:shadow-lg  hover:scale-105 transition-shadow w-full md:w-64 h-36">
+              <div className="w-12 h-12 bg-[#D1F08B] text-black rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
                 1
               </div>
               <span className="text-gray-700 font-medium text-left">
@@ -217,8 +222,8 @@ export function Home({ locale }: HomeProps) {
               </span>
             </div>
             <div className="hidden md:block text-gray-400 text-2xl">→</div>
-            <div className="flex items-center gap-4 bg-purple-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow w-full md:w-64 h-24">
-              <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
+            <div className="flex items-center gap-4 bg-white/30 p-6 rounded-2xl shadow-md hover:shadow-lg  hover:scale-105 transition-shadow w-full md:w-64 h-36">
+              <div className="w-12 h-12 bg-[#D1F08B] text-black rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
                 2
               </div>
               <span className="text-gray-700 font-medium text-left">
@@ -226,8 +231,8 @@ export function Home({ locale }: HomeProps) {
               </span>
             </div>
             <div className="hidden md:block text-gray-400 text-2xl">→</div>
-            <div className="flex items-center gap-4 bg-teal-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow w-full md:w-64 h-24">
-              <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
+            <div className="flex items-center gap-4 bg-white/30 p-6 rounded-2xl shadow-md hover:shadow-lg  hover:scale-105 transition-shadow w-full md:w-64 h-36">
+              <div className="w-12 h-12 bg-[#D1F08B] text-black hover:bg-[#b8d66a] rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
                 3
               </div>
               <span className="text-gray-700 font-medium text-left">

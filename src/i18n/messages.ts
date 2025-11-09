@@ -68,6 +68,11 @@ export interface Messages {
   // Disclaimers
   disclaimer: string;
   translationAttribution: string;
+  
+  // PHQ-9 Information
+  phq9InfoTitle: string;
+  phq9InfoDescription: string;
+  phq9InfoValidation: string;
 }
 
 const messages: Record<Locale, Messages> = {
@@ -136,6 +141,10 @@ const messages: Record<Locale, Messages> = {
     
     disclaimer: 'This tool is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.',
     translationAttribution: 'PHQ-9 translations sourced from phqscreeners.com. Cultural review recommended.',
+    
+    phq9InfoTitle: 'About PHQ-9 Assessment',
+    phq9InfoDescription: 'The Patient Health Questionnaire-9 (PHQ-9) is a clinically validated self-administered tool designed to assess the presence and severity of depressive symptoms. Each of its nine items corresponds to the diagnostic criteria for major depressive disorder as outlined in the DSM-5.',
+    phq9InfoValidation: 'The PHQ-9 has been validated internationally and is available in over 30 languages. It has been widely used and validated in countries including the United States, United Kingdom, Canada, Australia, New Zealand, and many others across Europe, Asia, and Latin America.',
   },
   
   mi: {
@@ -204,6 +213,10 @@ const messages: Record<Locale, Messages> = {
     
     disclaimer: 'He taputapu whakamōhiotanga anake tēnei, ehara i te whakakapi mō te tohutohu rata ngaio, te taumate, te maimoatanga rānei.',
     translationAttribution: 'Ko ngā whakamāoritanga PHQ-9 mai i te phqscreeners.com. Me arotake e te ahurea.',
+    
+    phq9InfoTitle: 'Mō te Aromatawai PHQ-9',
+    phq9InfoDescription: 'Ko te Pātai Hauora Tūroro-9 (PHQ-9) he taputapu whakamātau ā-haumanu i hangaia hei aromātai i te noho me te taumaha o ngā tohu pōuri. Ko ia o ngā mea e iwa e hāngai ana ki ngā paearu whakatau mō te mate pōuri nui e whakaaturia ana i te DSM-5.',
+    phq9InfoValidation: 'Kua whakamānā te PHQ-9 ā-ao, ā, e wātea ana i ngā reo neke atu i te 30. Kua whakamahia whānuitia, kua whakamānā hoki i ngā whenua pērā i te United States, te United Kingdom, te Canada, te Australia, Aotearoa, me ētahi atu whenua puta noa i Ūropi, Āhia, me Amerika ki te Tonga.',
   },
 };
 

@@ -7,6 +7,7 @@ import { getMessages, type Locale } from '@/i18n/messages';
 import { saveRecord, type PHQ9Record } from '@/utils/storage';
 import { getSeverity, shouldShowNudge, shouldEscalate, getSeverityColor } from '@/utils/severity';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ReaderIcon } from '@radix-ui/react-icons';
 
 interface PHQ9Props {
   locale: Locale;
@@ -209,6 +210,30 @@ export function PHQ9({ locale }: PHQ9Props) {
           )}
         </CardContent>
       </Card>
+
+      {/* PHQ-9 Information Card */}
+      <div className="mt-8">
+        <Card className="p-6 md:p-8 bg-gradient-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30 backdrop-blur-sm rounded-xl shadow-md">
+          <div className="flex gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-white/60 rounded-full flex items-center justify-center">
+                <ReaderIcon className="w-6 h-6 text-[#009490]" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg mb-3 text-gray-900">
+                {messages.phq9InfoTitle}
+              </h3>
+              <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                {messages.phq9InfoDescription}
+              </p>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {messages.phq9InfoValidation}
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

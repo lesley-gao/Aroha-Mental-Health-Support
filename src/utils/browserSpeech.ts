@@ -22,6 +22,7 @@ export function isSpeechRecognitionSupported(): boolean {
  * @param _audioBlob - Audio blob from recording (unused - Web Speech API doesn't support blob processing)
  * @returns Transcribed text
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function transcribeWithBrowserAPI(_audioBlob: Blob): Promise<string> {
   // For now, we use live recognition during recording instead of blob processing
   // This is a limitation of Web Speech API
