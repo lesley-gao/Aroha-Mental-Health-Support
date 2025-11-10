@@ -19,8 +19,8 @@ export function ScoreSummaryCard({ summary, currentSeverity, locale = 'en', tren
   const t = getTranslations(locale);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 border-2 border-indigo-100 rounded-lg">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div className="bg-white dark:bg-gray-800 p-6 border-2 border-indigo-100 rounded-lg shadow-md">
+      <h3 className="text-2xl font-semibold leading-none tracking-tight text-gray-900 dark:text-gray-100 mb-4">
         {t.title}
       </h3>
 
@@ -34,7 +34,7 @@ export function ScoreSummaryCard({ summary, currentSeverity, locale = 'en', tren
             {summary.current ?? '—'}
           </p>
           {summary.current !== null && (
-            <span className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${getSeverityBgColor(currentSeverity as SeverityLevel)} ${getSeverityColor(currentSeverity as SeverityLevel)}`}>
+            <span className={`inline-block mt-2 px-3 py-1 rounded-full text-base font-medium ${getSeverityBgColor(currentSeverity as SeverityLevel)} ${getSeverityColor(currentSeverity as SeverityLevel)}`}>
               {getSeverityLabel(currentSeverity)}
             </span>
           )}
@@ -53,7 +53,7 @@ export function ScoreSummaryCard({ summary, currentSeverity, locale = 'en', tren
                 'text-gray-600 rotate-90'
               }`} />
               <div>
-                <p className="font-medium">
+                <p className="font-bold text-2xl">
                   {trend.direction === 'down' && locale === 'en' && `Decreased by ${trend.change} points`}
                   {trend.direction === 'down' && locale === 'mi' && `Kua heke ${trend.change} piro`}
                   {trend.direction === 'up' && locale === 'en' && `Increased by ${trend.change} points`}
@@ -61,13 +61,13 @@ export function ScoreSummaryCard({ summary, currentSeverity, locale = 'en', tren
                   {trend.direction === 'stable' && locale === 'en' && 'Unchanged'}
                   {trend.direction === 'stable' && locale === 'mi' && 'Kāore i rerekē'}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-base text-gray-500 dark:text-gray-400 mt-1">
                   {locale === 'en' ? 'vs previous' : 'vs o mua'}
                 </p>
               </div>
             </div>
           ) : (
-            <p className="text-sm text-gray-500">—</p>
+            <p className="text-base text-gray-500">—</p>
           )}
         </div>
 
@@ -80,7 +80,7 @@ export function ScoreSummaryCard({ summary, currentSeverity, locale = 'en', tren
             {summary.average.toFixed(1)}
           </p>
           {summary.previous !== null && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-base text-gray-600 dark:text-gray-400 mt-1">
               {t.previous}: {summary.previous}
             </p>
           )}

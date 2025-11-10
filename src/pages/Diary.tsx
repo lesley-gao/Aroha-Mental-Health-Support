@@ -225,7 +225,7 @@ export default function Diary({ locale }: DiaryProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">{t.title}</h1>
         <p className="text-gray-600">{t.subtitle}</p>
@@ -388,7 +388,7 @@ export default function Diary({ locale }: DiaryProps) {
                 {entries.length > 5 && (
                   <button
                     onClick={() => navigate('/diary/all')}
-                    className="text-sm text-indigo-500 hover:text-indigo-800 hover:underline mt-4 w-full text-center"
+                    className="text-base text-indigo-500 hover:text-indigo-800 hover:underline mt-4 w-full text-center"
                   >
                     {t.showAllDiaries}
                   </button>

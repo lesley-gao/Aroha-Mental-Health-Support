@@ -79,7 +79,7 @@ export function AllDiaries({ locale }: AllDiariesProps) {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl py-8 px-4">
+    <div className="container mx-auto max-w-7xl py-8 px-4">
       <Card className="bg-white/30">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
@@ -127,7 +127,7 @@ export function AllDiaries({ locale }: AllDiariesProps) {
                     </button>
                     <button
                       onClick={() => navigate(`/diary/${entry.entry_date}`)}
-                      className="text-sm text-right text-indigo-500 hover:text-indigo-800 hover:underline mt-2"
+                      className="text-base text-right text-indigo-500 hover:text-indigo-800 hover:underline mt-2"
                     >
                       View Full
                     </button>

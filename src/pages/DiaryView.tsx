@@ -144,7 +144,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
 
   if (loading) {
     return (
-      <div className="container mx-auto max-w-4xl py-8 px-4">
+      <div className="container mx-auto max-w-7xl py-8 px-4">
         <Card>
           <CardContent className="py-12">
             <p className="text-center text-gray-500">{t.loading}</p>
@@ -156,7 +156,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
 
   if (!entry) {
     return (
-      <div className="container mx-auto max-w-4xl py-8 px-4 ">
+      <div className="container mx-auto max-w-7xl py-8 px-4 ">
         <Card>
           <CardHeader>
             <Button variant="default" onClick={() => navigate('/diary')} className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl py-8 px-4">
+    <div className="container mx-auto max-w-7xl py-8 px-4">
       <Card className="bg-white/30">
         <CardHeader>
           {/* Navigation Bar */}

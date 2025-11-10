@@ -48,15 +48,15 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
         <div className="flex-1">
           <div className="max-w-md w-full mx-auto">
             {/* Segmented tabs (fixed at top within left column) */}
-            <div className="mb-8 sticky top-6 z-10 w-max flex items-center gap-2 rounded-full bg-indigo-50/80 ring-2 ring-indigo-100 shadow-lg p-1 backdrop-blur supports-[backdrop-filter]:bg-indigo-50/60">
+            <div className="mb-8 sticky top-6 z-10 w-max flex items-center gap-2 rounded-full bg-indigo-50/80 ring-2 ring-indigo-100 shadow-md p-1 backdrop-blur ">
               <Button
                 variant="ghost"
                 onClick={() => setActive("login")}
                 className={
                   (active === "login"
                     ? "bg-indigo-100 text-gray-900 shadow-sm "
-                    : "text-gray-700 hover:text-gray-900 ") +
-                  "rounded-full px-4 py-2 focus-visible:ring-indigo-400"
+                    : "text-gray-700 hover:text-indigo-900 ") +
+                  "rounded-full px-4 py-2 focus-visible:ring-indigo-500"
                 }
                 aria-selected={active === "login"}
                 role="tab"
@@ -72,8 +72,8 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
                 className={
                   (active === "signup"
                     ? "bg-indigo-100 text-gray-900 shadow-sm "
-                    : "text-gray-700 hover:text-gray-900 ") +
-                  "rounded-full px-4 py-2 focus-visible:ring-indigo-400"
+                    : "text-gray-700 hover:text-indigo-900 ") +
+                  "rounded-full px-4 py-2 focus-visible:ring-indigo-500"
                 }
                 aria-selected={active === "signup"}
                 role="tab"
@@ -230,7 +230,7 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-11 rounded-md"
+                  className="w-full h-11 rounded-md shadow-lg"
                   disabled={isLoading || !email || !loginPassword}
                 >
                   {isLoading ? "Logging in..." : "Log in"}

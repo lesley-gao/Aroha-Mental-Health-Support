@@ -87,7 +87,7 @@ export function PHQ9({ locale }: PHQ9Props) {
   const severity = getSeverity(currentTotal);
 
   return (
-    <div className="container mx-auto max-w-3xl py-8 px-4">
+    <div className="container mx-auto max-w-4xl py-8 px-4">
       <Card className="bg-white/30">
         <CardHeader>
           <CardTitle className="text-2xl">{messages.phq9Title}</CardTitle>
@@ -160,7 +160,7 @@ export function PHQ9({ locale }: PHQ9Props) {
             <Button
               onClick={handleSubmit}
               disabled={!isFormValid() || isSubmitting}
-              className="flex-1"
+              className="flex-1 shadow-md "
             >
               {isSubmitting ? 'Saving...' : messages.submit}
             </Button>
@@ -224,10 +224,10 @@ export function PHQ9({ locale }: PHQ9Props) {
               <h3 className="font-semibold text-lg mb-3 text-gray-900">
                 {messages.phq9InfoTitle}
               </h3>
-              <p className="text-gray-700 text-sm leading-relaxed mb-3">
+              <p className="text-gray-700 text-base leading-relaxed mb-3">
                 {messages.phq9InfoDescription}
               </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 text-base leading-relaxed">
                 {messages.phq9InfoValidation}
               </p>
             </div>

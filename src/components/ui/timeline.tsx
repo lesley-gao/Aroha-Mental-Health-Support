@@ -104,7 +104,7 @@ const TimelineTime = React.forwardRef<HTMLElement, TimelineTimeProps>(
       <time
         ref={ref as React.Ref<HTMLTimeElement>}
         className={cn(
-          'text-sm font-semibold leading-none text-gray-900',
+          'text-lg font-semibold leading-none text-gray-900',
           className
         )}
         {...props}
@@ -121,7 +121,7 @@ const TimelineTitle = React.forwardRef<HTMLHeadingElement, TimelineTitleProps>(
     return (
       <h3
         ref={ref}
-        className={cn('text-sm font-semibold text-gray-700', className)}
+        className={cn('text-base font-semibold text-gray-700', className)}
         {...props}
       >
         {children}
@@ -136,7 +136,7 @@ const TimelineDescription = React.forwardRef<HTMLParagraphElement, TimelineDescr
     return (
       <p
         ref={ref}
-        className={cn('text-sm text-gray-500', className)}
+        className={cn('text-base text-gray-500', className)}
         {...props}
       >
         {children}
