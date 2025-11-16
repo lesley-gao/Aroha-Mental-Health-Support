@@ -7,10 +7,11 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Volume2 } from 'lucide-react';
 import type { Locale } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
+import { getMessages } from '@/i18n/messages';
 
 interface SpeechToTextProps {
   onTranscript: (text: string) => void;
-  locale: Locale;
   className?: string;
 }
 
@@ -62,13 +63,13 @@ interface SpeechRecognitionErrorEvent {
   message: string;
 }
 
-export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToTextProps) {
+export function SpeechToText({ onTranscript, className = '' }: SpeechToTextProps) {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  const t = getTranslations(locale);
+  const { t, locale } = useTranslation();
 
   useEffect(() => {
     // Check if browser supports Speech Recognition
@@ -81,7 +82,7 @@ export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToT
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = locale === 'mi' ? 'mi-NZ' : 'en-NZ';
+      recognition.lang = locale === 'mi' ? 'mi-NZ' : locale === 'zh' ? 'zh-CN' : 'en-NZ';
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         let finalTranscript = '';
@@ -143,9 +144,9 @@ export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToT
 
   if (!isSupported) {
     return (
-      <div className={`flex items-center gap-2  text-gray-500 ${className}`}>
+        <div className={`flex items-center gap-2  text-gray-500 ${className}`}>
         <Volume2 className="h-4 w-4" />
-        <span>{t.notSupported}</span>
+        <span>{t('notSupported')}</span>
       </div>
     );
   }
@@ -163,12 +164,12 @@ export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToT
           {isListening ? (
             <>
               <MicOff className="h-4 w-4 animate-pulse" />
-              {t.stopRecording}
+              {t('stopRecording')}
             </>
           ) : (
             <>
               <Mic className="h-4 w-4" />
-              {t.startRecording}
+              {t('startRecording')}
             </>
           )}
         </Button>
@@ -180,7 +181,7 @@ export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToT
               <span className="w-1 h-4 bg-red-500 rounded animate-pulse" style={{ animationDelay: '150ms' }} />
               <span className="w-1 h-4 bg-red-500 rounded animate-pulse" style={{ animationDelay: '300ms' }} />
             </div>
-            <span>{t.listening}</span>
+            <span>{t('listening')}</span>
           </div>
         )}
       </div>
@@ -193,7 +194,7 @@ export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToT
 
       {isListening && (
         <div className="text-xs text-gray-500 italic">
-          {t.tip}
+          {t('tip')}
         </div>
       )}
     </div>
@@ -201,53 +202,16 @@ export function SpeechToText({ onTranscript, locale, className = '' }: SpeechToT
 }
 
 function getErrorMessage(error: string, locale: Locale): string {
-  const messages: Record<string, Record<string, string>> = {
-    en: {
-      'no-speech': 'No speech detected. Please try again.',
-      'audio-capture': 'No microphone found. Please check your device.',
-      'not-allowed': 'Microphone access denied. Please allow microphone access.',
-      'network': 'Network error. Please check your connection.',
-      'failed-to-start': 'Failed to start recording. Please try again.',
-      default: 'An error occurred. Please try again.',
-    },
-    mi: {
-      'no-speech': 'Kāore i kitea he kōrero. Tēnā whakamātau anō.',
-      'audio-capture': 'Kāore i kitea he hopuoro. Tēnā tirohia tō taputapu.',
-      'not-allowed': 'Kua whakakāhoretia te urunga hopuoro. Tēnā whakaaetia.',
-      'network': 'He hapa whatunga. Tēnā tirohia tō hononga.',
-      'failed-to-start': 'I rahua te tīmata hopu. Tēnā whakamātau anō.',
-      default: 'I puta he hapa. Tēnā whakamātau anō.',
-    },
+  const msgs = getMessages(locale);
+
+  const map: Record<string, string> = {
+    'no-speech': msgs.noSpeech || msgs.tryAgain,
+    'audio-capture': msgs.permissionDenied || msgs.tryAgain,
+    'not-allowed': msgs.permissionDenied || msgs.tryAgain,
+    'permission-denied': msgs.permissionDenied || msgs.tryAgain,
+    'network': msgs.tryAgain || msgs.error || 'Network error',
+    'failed-to-start': msgs.tryAgain || msgs.error,
   };
 
-  return messages[locale]?.[error] || messages[locale]?.default || messages.en.default;
-}
-
-function getTranslations(locale: Locale) {
-  interface Translations {
-    startRecording: string;
-    stopRecording: string;
-    listening: string;
-    notSupported: string;
-    tip: string;
-  }
-
-  const translations: Record<string, Translations> = {
-    en: {
-      startRecording: 'Start Recording',
-      stopRecording: 'Stop Recording',
-      listening: 'Listening...',
-      notSupported: 'Speech recognition not supported in this browser',
-      tip: 'Speak clearly into your microphone. Your speech will be automatically transcribed.',
-    },
-    mi: {
-      startRecording: 'Tīmata Hopu',
-      stopRecording: 'Mutu Hopu',
-      listening: 'E whakarongo ana...',
-      notSupported: 'Kāore e tautokona te mōhiotanga kōrero i tēnei pūtirotiro',
-      tip: 'Kōrero mārama ki tō hopuoro. Ka tuhia aunoa tō kōrero.',
-    },
-  };
-
-  return translations[locale] || translations.en;
+  return map[error] || msgs.error || msgs.tryAgain || 'An error occurred.';
 }

@@ -3,23 +3,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { getMessages, type Locale } from '@/i18n/messages';
+import { getMessages } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
 import { saveRecord, type PHQ9Record } from '@/utils/storage';
 import { getSeverity, shouldShowNudge, shouldEscalate, getSeverityColor } from '@/utils/severity';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ReaderIcon } from '@radix-ui/react-icons';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { Link } from 'react-router-dom';
 
-interface PHQ9Props {
-  locale: Locale;
-}
-
-export function PHQ9({ locale }: PHQ9Props) {
+export function PHQ9() {
+  const { locale } = useTranslation();
   const messages = getMessages(locale);
   
   // State for answers (0-3 for each question)
   const [answers, setAnswers] = useState<(number | null)[]>(Array(9).fill(null));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showLoginCTA, setShowLoginCTA] = useState(false);
 
   const handleAnswerChange = (questionIndex: number, value: string) => {
     const newAnswers = [...answers];
@@ -37,7 +38,7 @@ export function PHQ9({ locale }: PHQ9Props) {
 
   const handleSubmit = async () => {
     if (!isFormValid()) {
-      alert('Please answer all questions');
+      alert(messages.pleaseAnswerAll || 'Please answer all questions');
       return;
     }
 
@@ -60,6 +61,20 @@ export function PHQ9({ locale }: PHQ9Props) {
       
       // Show success message briefly
       setShowSuccess(true);
+      // If user is not authenticated, show CTA to login/create account to save records to cloud
+      try {
+        if (isSupabaseConfigured() && supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            setShowLoginCTA(true);
+          }
+        } else {
+          // No supabase configured -> treat as unauthenticated
+          setShowLoginCTA(true);
+        }
+      } catch {
+        setShowLoginCTA(true);
+      }
       setTimeout(() => {
         setShowSuccess(false);
         // Reset form
@@ -162,24 +177,37 @@ export function PHQ9({ locale }: PHQ9Props) {
               disabled={!isFormValid() || isSubmitting}
               className="flex-1 shadow-md "
             >
-              {isSubmitting ? 'Saving...' : messages.submit}
+              {isSubmitting ? messages.saving || 'Saving...' : messages.submit}
             </Button>
             {showSuccess && (
               <div className="flex items-center gap-2 text-green-600">
                 <CheckCircle2 className="h-5 w-5" />
                 <span className="  font-medium">
-                  Saved successfully!
+                  {messages.savedSuccessfully || 'Saved successfully!'}
                 </span>
               </div>
             )}
           </div>
+
+          {showLoginCTA && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-gray-800">
+                {messages.nudgeText || 'You can keep track of score changes by creating an account.'}
+              </p>
+              <div className="mt-3">
+                <Link to="/auth">
+                  <Button variant="default" className="mt-2">{messages.loginButton || 'Login / Create account'}</Button>
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Show nudge or escalation after submission preview */}
           {isFormValid() && shouldShowNudge(currentTotal) && (
             <Card className="bg-amber-50">
               <CardContent className="pt-6">
                 <div className="flex gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                   <div className="space-y-2">
                     <p className="  text-amber-900 font-medium">
                       {shouldEscalate(currentTotal) 
@@ -213,9 +241,9 @@ export function PHQ9({ locale }: PHQ9Props) {
 
       {/* PHQ-9 Information Card */}
       <div className="mt-8">
-        <Card className="p-6 md:p-8 bg-gradient-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30 backdrop-blur-sm rounded-xl shadow-md">
+        <Card className="p-6 md:p-8 bg-linear-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30 backdrop-blur-sm rounded-xl shadow-md">
           <div className="flex gap-4">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <div className="w-12 h-12 bg-white/60 rounded-full flex items-center justify-center">
                 <ReaderIcon className="w-6 h-6 text-[#009490]" />
               </div>

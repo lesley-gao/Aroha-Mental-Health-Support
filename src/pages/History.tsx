@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getMergedRecords, type PHQ9Record } from '@/utils/storage';
-import { getMessages, type Locale } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
 import { FileDown, Calendar, ChevronLeft, ChevronRight, List, CalendarDays } from 'lucide-react';
 import { PHQ9LineChart } from '@/components/charts/PHQ9LineChart';
 import { ScoreSummaryCard } from '@/components/charts/ScoreSummary';
 import { transformToChartData, calculateScoreSummary } from '@/utils/chartUtils';
 
 interface HistoryProps {
-  locale: Locale;
   onExportPDF?: () => void;
 }
 
@@ -17,8 +16,8 @@ const RECORDS_PER_PAGE = 10;
 
 type ViewMode = 'list' | 'calendar';
 
-export function History({ locale, onExportPDF }: HistoryProps) {
-  const messages = getMessages(locale);
+export function History({ onExportPDF }: HistoryProps) {
+  const { t, locale } = useTranslation();
   const [records, setRecords] = useState<PHQ9Record[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +44,8 @@ export function History({ locale, onExportPDF }: HistoryProps) {
 
   const formatDate = (isoString: string): string => {
     const date = new Date(isoString);
-    return date.toLocaleDateString(locale === 'mi' ? 'en-NZ' : 'en-NZ', {
+    const dateLocale = locale === 'mi' ? 'mi-NZ' : locale === 'zh' ? 'zh-CN' : 'en-NZ';
+    return date.toLocaleDateString(dateLocale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -56,11 +56,11 @@ export function History({ locale, onExportPDF }: HistoryProps) {
 
   const getSeverityLabel = (severity: string): string => {
     switch (severity) {
-      case 'Minimal': return messages.severityMinimal;
-      case 'Mild': return messages.severityMild;
-      case 'Moderate': return messages.severityModerate;
-      case 'Moderately severe': return messages.severityModeratelySevere;
-      case 'Severe': return messages.severitySevere;
+      case 'Minimal': return String(t('severityMinimal'));
+      case 'Mild': return String(t('severityMild'));
+      case 'Moderate': return String(t('severityModerate'));
+      case 'Moderately severe': return String(t('severityModeratelySevere'));
+      case 'Severe': return String(t('severitySevere'));
       default: return severity;
     }
   };
@@ -162,16 +162,19 @@ export function History({ locale, onExportPDF }: HistoryProps) {
   };
 
   const formatMonthYear = (date: Date): string => {
-    return date.toLocaleDateString(locale === 'mi' ? 'en-NZ' : 'en-NZ', {
+    const dateLocale = locale === 'mi' ? 'mi-NZ' : locale === 'zh' ? 'zh-CN' : 'en-NZ';
+    return date.toLocaleDateString(dateLocale, {
       year: 'numeric',
       month: 'long',
     });
   };
 
   const calendarDays = getDaysInMonth(currentMonth);
-  const weekDays = locale === 'en' 
-    ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    : ['Rātapu', 'Rāhina', 'Rātū', 'Rāapa', 'Rāpare', 'Rāmere', 'Rāhoroi'];
+  const weekDays = locale === 'mi'
+    ? ['Rātapu', 'Rāhina', 'Rātū', 'Rāapa', 'Rāpare', 'Rāmere', 'Rāhoroi']
+    : locale === 'zh'
+    ? ['日', '一', '二', '三', '四', '五', '六']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   // Pagination calculations
   const totalPages = Math.ceil(records.length / RECORDS_PER_PAGE);
@@ -201,13 +204,13 @@ export function History({ locale, onExportPDF }: HistoryProps) {
       <div className="container mx-auto max-w-7xl py-8 px-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">{messages.historyTitle}</CardTitle>
-            <CardDescription>{messages.historyEmpty}</CardDescription>
+            <CardTitle className="text-2xl">{t('historyTitle')}</CardTitle>
+            <CardDescription>{t('historyEmpty')}</CardDescription>
           </CardHeader>
           <CardContent className="py-12">
             <div className="text-center">
               <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">{messages.historyEmpty}</p>
+              <p className="text-gray-500">{t('historyEmpty')}</p>
             </div>
           </CardContent>
         </Card>
@@ -221,7 +224,7 @@ export function History({ locale, onExportPDF }: HistoryProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl">{messages.historyTitle}</CardTitle>
+              <CardTitle className="text-2xl">{t('historyTitle')}</CardTitle>
               <CardDescription>
                 {records.length} {records.length === 1 ? 'assessment' : 'assessments'} recorded
               </CardDescription>
@@ -229,7 +232,7 @@ export function History({ locale, onExportPDF }: HistoryProps) {
             {onExportPDF && (
               <Button onClick={onExportPDF} variant="outline" className="bg-[#D1F08B] text-gray-900 shadow-md hover:bg-[#b8d66a]">
                 <FileDown className="h-4 w-4 mr-2" />
-                {messages.historyExportPDF}
+                {t('historyExportPDF')}
               </Button>
             )}
           </div>

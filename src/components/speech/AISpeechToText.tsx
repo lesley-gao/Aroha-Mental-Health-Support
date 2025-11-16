@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Loader2, Sparkles } from 'lucide-react';
 import { processAudioDiary, extractEmotionalKeywords } from '@/utils/aiSpeech';
 import type { Locale } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
 
 interface AISpeechToTextProps {
   onTranscript: (text: string) => void;
@@ -30,37 +31,9 @@ export function AISpeechToText({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const durationIntervalRef = useRef<number | null>(null);
-
-  const translations = {
-    en: {
-      startRecording: 'Start Recording',
-      stopRecording: 'Stop Recording',
-      processing: 'Processing...',
-      transcribing: 'Transcribing your speech...',
-      summarizing: 'Summarizing your thoughts...',
-      aiPowered: 'AI-Powered',
-      error: 'Error',
-      permissionDenied: 'Microphone permission denied',
-      noSpeech: 'No speech detected',
-      tryAgain: 'Try Again',
-      recordingTime: 'Recording'
-    },
-    mi: {
-      startRecording: 'Tīmata Hopu',
-      stopRecording: 'Kāti Hopu',
-      processing: 'E tukatuka ana...',
-      transcribing: 'E tuhituhi ana i tō kōrero...',
-      summarizing: 'E whakarāpopoto ana i ō whakaaro...',
-      aiPowered: 'Kaha AI',
-      error: 'Hapa',
-      permissionDenied: 'Kua whakakāhoretia te whakaae mikiona',
-      noSpeech: 'Kāore he kōrero i kitea',
-      tryAgain: 'Whakamātau Anō',
-      recordingTime: 'E hopu ana'
-    }
-  };
-
-  const t = translations[locale];
+  const { t, locale: providerLocale } = useTranslation();
+  const activeLocale = locale ?? providerLocale;
+  console.debug('AISpeechToText activeLocale:', activeLocale);
 
   const startRecording = async () => {
     try {
@@ -121,7 +94,7 @@ export function AISpeechToText({
 
     } catch (err) {
       console.error('Recording error:', err);
-      setError(t.permissionDenied);
+      setError(String(t('permissionDenied')));
     }
   };
 
@@ -141,7 +114,7 @@ export function AISpeechToText({
       const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
       
       if (audioBlob.size === 0) {
-        throw new Error(t.noSpeech);
+        throw new Error(String(t('noSpeech')));
       }
 
       console.log('🎤 Audio recorded:', audioBlob.size, 'bytes, type:', mimeType);
@@ -150,7 +123,7 @@ export function AISpeechToText({
       const result = await processAudioDiary(audioBlob);
       
       if (!result.transcription || result.transcription.trim().length === 0) {
-        throw new Error(t.noSpeech);
+        throw new Error(String(t('noSpeech')));
       }
       
       console.log('✅ Transcription:', result.transcription);
@@ -200,17 +173,17 @@ export function AISpeechToText({
           {isProcessing ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              {t.processing}
+              {String(t('processing'))}
             </>
           ) : isRecording ? (
             <>
               <MicOff className="w-4 h-4" />
-              {t.stopRecording}
+              {String(t('stopRecording'))}
             </>
           ) : (
             <>
               <Mic className="w-4 h-4" />
-              {t.startRecording}
+              {String(t('startRecording'))}
             </>
           )}
         </Button>
@@ -218,14 +191,14 @@ export function AISpeechToText({
         {/* AI Badge */}
         <div className="flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium">
           <Sparkles className="w-3 h-3" />
-          {t.aiPowered}
+          {String(t('aiPowered'))}
         </div>
 
         {/* Recording Duration */}
         {isRecording && (
           <div className="flex items-center gap-2  text-red-600 animate-pulse">
             <div className="w-2 h-2 bg-red-600 rounded-full" />
-            {t.recordingTime}: {formatDuration(recordingDuration)}
+            {String(t('recordingTime'))}: {formatDuration(recordingDuration)}
           </div>
         )}
       </div>
@@ -236,9 +209,9 @@ export function AISpeechToText({
           <div className="flex items-center gap-2  text-blue-700">
             <Loader2 className="w-4 h-4 animate-spin" />
             <div>
-              <div className="font-medium">{t.transcribing}</div>
+              <div className="font-medium">{String(t('transcribing'))}</div>
               {showSummary && (
-                <div className="text-xs text-blue-600 mt-1">{t.summarizing}</div>
+                <div className="text-xs text-blue-600 mt-1">{String(t('summarizing'))}</div>
               )}
             </div>
           </div>
@@ -250,7 +223,7 @@ export function AISpeechToText({
         <div className="p-3 bg-red-50 rounded-lg border border-red-200">
           <div className="flex items-center justify-between">
             <div className=" text-red-700">
-              <div className="font-medium">{t.error}</div>
+              <div className="font-medium">{String(t('error'))}</div>
               <div>{error}</div>
             </div>
             <Button
@@ -258,18 +231,14 @@ export function AISpeechToText({
               variant="outline"
               onClick={() => setError(null)}
             >
-              {t.tryAgain}
+              {String(t('tryAgain'))}
             </Button>
           </div>
         </div>
       )}
 
       {/* Help Text */}
-      <div className="text-xs text-gray-500">
-        {locale === 'en' 
-          ? 'AI will transcribe your speech and provide a summary of your thoughts.'
-          : 'Mā te AI e tuhituhi tō kōrero me te whakarāpopoto i ō whakaaro.'}
-      </div>
+      <div className="text-xs text-gray-500">{String(t('aiHelpText'))}</div>
     </div>
   );
 }

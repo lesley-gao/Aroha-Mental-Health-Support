@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronLeft, ChevronRight, Calendar, Edit } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import type { Locale } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
 import { format } from 'date-fns';
 
 interface DiaryEntry {
@@ -21,11 +21,7 @@ interface DiaryEntry {
   updated_at: string;
 }
 
-interface DiaryViewProps {
-  locale: Locale;
-}
-
-export function DiaryView({ locale }: DiaryViewProps) {
+export function DiaryView() {
   const { date } = useParams<{ date: string }>();
   const navigate = useNavigate();
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
@@ -35,7 +31,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
     next: string | null;
   }>({ previous: null, next: null });
 
-  const t = getTranslations(locale);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (date) {
@@ -147,7 +143,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
       <div className="container mx-auto max-w-7xl py-8 px-4">
         <Card>
           <CardContent className="py-12">
-            <p className="text-center text-gray-500">{t.loading}</p>
+            <p className="text-center text-gray-500">{t('loading')}</p>
           </CardContent>
         </Card>
       </div>
@@ -161,13 +157,13 @@ export function DiaryView({ locale }: DiaryViewProps) {
           <CardHeader>
             <Button variant="default" onClick={() => navigate('/diary')} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              {t.backToDiary}
+              {t('backToDiary')}
             </Button>
           </CardHeader>
           <CardContent className="py-12">
             <div className="text-center">
               <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">{t.noEntry}</p>
+              <p className="text-gray-500">{t('noEntry')}</p>
             </div>
           </CardContent>
         </Card>
@@ -183,7 +179,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
           <div className="flex items-center justify-between mb-12">
             <Button variant="default" onClick={() => navigate('/diary')} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              {t.backToDiary}
+              {t('backToDiary')}
             </Button>
             <div className="flex gap-2">
               <Button
@@ -193,7 +189,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
                 disabled={!adjacentDates.previous}
               >
                 <ChevronLeft className="h-4 w-4" />
-                {t.previous}
+                {t('previous')}
               </Button>
               <Button
                 variant="outline"
@@ -201,7 +197,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
                 onClick={handleNext}
                 disabled={!adjacentDates.next}
               >
-                {t.next}
+                {t('next')}
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -211,7 +207,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h1 className=" text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                {entry.title || t.untitled}
+                {entry.title || t('untitled')}
               </h1>
               <div className="flex items-center gap-2 " style={{  color: '#6b7280' }}>
                 <Calendar className="h-4 w-4" />
@@ -220,7 +216,7 @@ export function DiaryView({ locale }: DiaryViewProps) {
             </div>
             <Button variant="outline" onClick={handleEdit} className="gap-2">
               <Edit className="h-4 w-4" />
-              {t.edit}
+              {t('edit')}
             </Button>
           </div>
         </CardHeader>
@@ -237,11 +233,11 @@ export function DiaryView({ locale }: DiaryViewProps) {
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between text-gray-500"  >
               <div>
-                {t.created}: {format(new Date(entry.created_at), 'PPp')}
+                {t('created')}: {format(new Date(entry.created_at), 'PPp')}
               </div>
               {entry.updated_at !== entry.created_at && (
                 <div>
-                  {t.lastModified}: {format(new Date(entry.updated_at), 'PPp')}
+                  {t('lastModified')}: {format(new Date(entry.updated_at), 'PPp')}
                 </div>
               )}
             </div>
@@ -251,45 +247,4 @@ export function DiaryView({ locale }: DiaryViewProps) {
     </div>
   );
 }
-
-// Translations
-function getTranslations(locale: Locale) {
-  interface Translations {
-    loading: string;
-    backToDiary: string;
-    noEntry: string;
-    previous: string;
-    next: string;
-    untitled: string;
-    edit: string;
-    created: string;
-    lastModified: string;
-  }
-
-  const translations: Record<string, Translations> = {
-    en: {
-      loading: 'Loading...',
-      backToDiary: 'Back to Diary',
-      noEntry: 'No entry found for this date',
-      previous: 'Previous',
-      next: 'Next',
-      untitled: 'Untitled Entry',
-      edit: 'Edit',
-      created: 'Created',
-      lastModified: 'Last modified',
-    },
-    mi: {
-      loading: 'E uta ana...',
-      backToDiary: 'Hoki ki te Diary',
-      noEntry: 'Kāore he tāurunga mō tēnei rā',
-      previous: 'O Mua',
-      next: 'E Haere Ana',
-      untitled: 'Tāurunga Kāore i Ingoatia',
-      edit: 'Whakatika',
-      created: 'I Hangaia',
-      lastModified: 'I whakapaihia whakamutunga',
-    },
-  };
-
-  return translations[locale] || translations.en;
-}
+// Translations moved into central `src/i18n/messages.ts`

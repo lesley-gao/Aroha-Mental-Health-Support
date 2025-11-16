@@ -13,19 +13,19 @@ import {
   extractEmotionalKeywords,
   generateSimpleSummary
 } from '@/utils/browserSpeech';
-import type { Locale } from '@/i18n/messages';
+import type { Messages } from '@/i18n/messages';
+import { getMessages } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
 
 interface BrowserSpeechToTextProps {
   onTranscript: (text: string) => void;
   onSummary?: (summary: string) => void;
-  locale?: Locale;
   showSummary?: boolean;
 }
 
 export function BrowserSpeechToText({ 
   onTranscript, 
   onSummary,
-  locale = 'en',
   showSummary = true 
 }: BrowserSpeechToTextProps) {
   const [isRecording, setIsRecording] = useState(false);
@@ -39,36 +39,15 @@ export function BrowserSpeechToText({
   const currentTranscriptRef = useRef('');
   const isRecordingRef = useRef(false);
 
-  const translations = {
-    en: {
-      startRecording: 'Start Recording',
-      stopRecording: 'Stop Recording',
-      browserPowered: 'Speech to text',
-      error: 'Error',
-      notSupported: 'Speech recognition not supported in this browser. Please use Chrome or Edge.',
-      permissionDenied: 'Microphone permission denied',
-      noSpeech: 'No speech detected',
-      tryAgain: 'Try Again',
-      recordingTime: 'Recording',
-      requiresInternet: 'Please make sure you are connected to the internet',
-      aiSummary: 'Here is what AI summarizes:'
-    },
-    mi: {
-      startRecording: 'Tīmata Hopu',
-      stopRecording: 'Kāti Hopu',
-      browserPowered: 'Kōrero ki te Tuhi',
-      error: 'Hapa',
-      notSupported: 'Kāore e tautokohia te whakamātautau kōrero i tēnei pūtirotiro. Whakamahia Chrome, Edge rānei.',
-      permissionDenied: 'Kua whakakāhoretia te whakaae mikiona',
-      noSpeech: 'Kāore he kōrero i kitea',
-      tryAgain: 'Whakamātau Anō',
-      recordingTime: 'E hopu ana',
-      requiresInternet: 'Me whai hononga ipurangi',
-      aiSummary: 'Ko tēnei te whakarāpopototanga a te AI:'
-    }
-  };
+  // use provider translations (provider is mounted at app root)
+  const { locale: providerLocale } = useTranslation();
 
-  const t = translations[locale];
+  const effectiveLocale = providerLocale ?? 'en';
+  const msgs = getMessages(effectiveLocale);
+  const tr = useCallback(
+    (key: keyof Messages) => (msgs as unknown as Record<string, string>)[key] ?? String(key),
+    [msgs]
+  );
 
   // Update refs when state changes
   useEffect(() => {
@@ -83,7 +62,7 @@ export function BrowserSpeechToText({
     const transcript = currentTranscriptRef.current.trim();
     
     if (!transcript) {
-      setError(t.noSpeech);
+      setError(tr('noSpeech'));
       return;
     }
 
@@ -107,18 +86,18 @@ export function BrowserSpeechToText({
     
     // Clear error on success
     setError(null);
-  }, [onTranscript, onSummary, showSummary, t.noSpeech]);
+  }, [onTranscript, onSummary, showSummary, tr]);
 
   useEffect(() => {
     // Initialize speech recognition
     if (!isSpeechRecognitionSupported()) {
-      setError(t.notSupported);
+      setError(tr('notSupported'));
       return;
     }
 
     try {
       const recognition = createSpeechRecognition({
-        language: locale === 'mi' ? 'mi-NZ' : 'en-US',
+        language: providerLocale === 'mi' ? 'mi-NZ' : providerLocale === 'zh' ? 'zh-CN' : 'en-US',
         continuous: true,
         onResult: (transcript, isFinal) => {
           setCurrentTranscript(transcript);
@@ -126,11 +105,11 @@ export function BrowserSpeechToText({
             console.log('✅ Final transcript:', transcript);
           }
         },
-        onError: (errorMsg) => {
-          console.error('❌ Speech error:', errorMsg);
-          setError(errorMsg);
-          setIsRecording(false);
-        },
+          onError: (errorMsg) => {
+            console.error('❌ Speech error:', errorMsg);
+            setError(errorMsg);
+            setIsRecording(false);
+          },
         onEnd: () => {
           console.log('🎤 Speech recognition ended');
           if (isRecordingRef.current) {
@@ -146,7 +125,7 @@ export function BrowserSpeechToText({
       recognitionRef.current = recognition;
     } catch (err) {
       console.error('Failed to initialize speech recognition:', err);
-      setError(t.notSupported);
+      setError(tr('notSupported'));
     }
 
     return () => {
@@ -154,11 +133,11 @@ export function BrowserSpeechToText({
         clearInterval(durationIntervalRef.current);
       }
     };
-  }, [locale, finalizeTranscript, t.notSupported]);
+  }, [providerLocale, tr, finalizeTranscript]);
 
   const startRecording = () => {
     if (!recognitionRef.current) {
-      setError(t.notSupported);
+      setError(tr('notSupported'));
       return;
     }
 
@@ -178,7 +157,7 @@ export function BrowserSpeechToText({
 
     } catch (err) {
       console.error('Recording error:', err);
-      setError(t.permissionDenied);
+      setError(tr('permissionDenied'));
     }
   };
 
@@ -195,7 +174,7 @@ export function BrowserSpeechToText({
       if (currentTranscript.trim().length > 0) {
         finalizeTranscript();
       } else {
-        setError(t.noSpeech);
+        setError(tr('noSpeech'));
       }
     }
   };
@@ -219,12 +198,12 @@ export function BrowserSpeechToText({
           {isRecording ? (
             <>
               <MicOff className="w-4 h-4" />
-              {t.stopRecording}
+              {tr('stopRecording')}
             </>
           ) : (
             <>
               <Mic className="w-4 h-4" />
-              {t.startRecording}
+              {tr('startRecording')}
             </>
           )}
         </Button>
@@ -232,14 +211,14 @@ export function BrowserSpeechToText({
         {/* Browser API Badge */}
         <div className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
           <Wifi className="w-3 h-3" />
-          {t.browserPowered}
+          {tr('browserPowered')}
         </div>
 
         {/* Recording Duration */}
         {isRecording && (
           <div className="flex items-center gap-2   text-red-600 animate-pulse">
             <div className="w-2 h-2 bg-red-600 rounded-full" />
-            {t.recordingTime}: {formatDuration(recordingDuration)}
+            {tr('recordingTime')}: {formatDuration(recordingDuration)}
           </div>
         )}
       </div>
@@ -257,7 +236,7 @@ export function BrowserSpeechToText({
         <div className="p-3 bg-red-50 rounded-lg border border-red-200">
           <div className="flex items-center justify-between">
             <div className="  text-red-700">
-              <div className="font-medium">{t.error}</div>
+              <div className="font-medium">{tr('error')}</div>
               <div>{error}</div>
             </div>
             <Button
@@ -265,7 +244,7 @@ export function BrowserSpeechToText({
               variant="outline"
               onClick={() => setError(null)}
             >
-              {t.tryAgain}
+              {tr('tryAgain')}
             </Button>
           </div>
         </div>
@@ -274,10 +253,8 @@ export function BrowserSpeechToText({
       {/* Help Text */}
       <div className=" text-gray-500">
         {wasRecordingStopped && currentTranscript.trim().length > 0
-          ? t.aiSummary
-          : locale === 'en' 
-            ? 'Using browser speech recognition. Please make sure you are connected to the internet.'
-            : 'Mā te whakamātautau kōrero pūtirotiro. Me whai hononga ipurangi.'}
+          ? tr('aiSummary')
+          : tr('requiresInternet')}
       </div>
     </div>
   );

@@ -20,8 +20,10 @@ import Diary from "./pages/Diary";
 import { DiaryView } from "./pages/DiaryView";
 import { AllDiaries } from "./pages/AllDiaries";
 import { Footer } from "./components/Footer";
-import { type Locale } from "./i18n/messages";
-import { getLanguage, getMergedRecords } from "./utils/storage";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { getMergedRecords, getRecords, migrateLocalRecordsToCloud, hasSeenMigrationPrompt, setSeenMigrationPrompt } from "./utils/storage";
+import useTranslation from './i18n/useTranslation';
+import type { Locale } from './i18n/messages';
 import { generatePDF } from "./utils/pdf";
 import { supabase, isSupabaseConfigured } from "./lib/supabase";
 import {
@@ -36,19 +38,22 @@ import "./App.css";
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [locale, setLocale] = useState<Locale>("en");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const { t, locale, setLocale } = useTranslation();
+  const [showMigrationModal, setShowMigrationModal] = useState(false);
+  // migrationCounts intentionally unused in the UI; tracking only during migration flow
+  const [, setMigrationCounts] = useState<null | { migrated: number; skipped: number; errors: number }>(null);
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [pendingLocalCount, setPendingLocalCount] = useState<number>(0);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Load language preference
-    const savedLocale = getLanguage() as Locale;
-    setLocale(savedLocale);
-
     // Check for existing Supabase session
     if (isSupabaseConfigured() && supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         setIsAuthenticated(!!session);
+        setCurrentUserId(session?.user?.id ?? null);
       });
 
       // Listen for auth state changes
@@ -56,18 +61,39 @@ function AppContent() {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((_event, session) => {
         setIsAuthenticated(!!session);
+        setCurrentUserId(session?.user?.id ?? null);
       });
 
       return () => subscription.unsubscribe();
     }
   }, []);
 
-  const handleConsent = () => {
-    // Consent handled in modal, reload locale if needed
-    const savedLocale = getLanguage() as Locale;
-    setLocale(savedLocale);
-  };
+  // When user becomes authenticated, check for local records and prompt for migration
+  useEffect(() => {
+    let cancelled = false;
+    async function checkLocalRecords() {
+      try {
+        if (!isAuthenticated) return;
+        const local = await getRecords();
+        if (cancelled) return;
+        if (local.length > 0) {
+          // If we have a current user and they've already seen the prompt, skip showing again
+          if (currentUserId && hasSeenMigrationPrompt(currentUserId)) return;
 
+          setPendingLocalCount(local.length);
+          setShowMigrationModal(true);
+        }
+      } catch (err) {
+        console.error('Error checking local records for migration:', err);
+      }
+    }
+    checkLocalRecords();
+    return () => { cancelled = true; };
+  }, [isAuthenticated, currentUserId]);
+
+  const handleConsent = () => {
+    // Consent handled in modal; provider persists locale
+  };
   const handleLocaleChange = (newLocale: Locale) => {
     setLocale(newLocale);
   };
@@ -83,6 +109,26 @@ function AppContent() {
     // Navigate to home/login
     navigate("/");
     // Note: We're not clearing localStorage data as that contains user's PHQ-9 records
+  };
+
+  const handleMigrateNow = async () => {
+    setIsMigrating(true);
+    try {
+      const counts = await migrateLocalRecordsToCloud();
+      setMigrationCounts(counts);
+    } catch (err) {
+      console.error('Migration error:', err);
+    } finally {
+      // Mark that this user has seen the migration prompt so it doesn't reappear
+      if (currentUserId) setSeenMigrationPrompt(currentUserId);
+      setIsMigrating(false);
+      setShowMigrationModal(false);
+    }
+  };
+
+  const handleKeepLocal = () => {
+    if (currentUserId) setSeenMigrationPrompt(currentUserId);
+    setShowMigrationModal(false);
   };
 
   const handleExportPDF = async () => {
@@ -112,19 +158,15 @@ function AppContent() {
     }
   };
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
+  // Do not force redirect to Auth; let the main app render and expose /auth route
+
+  const isActive = (path: string) => location.pathname === path;
+
+  // If the route is the auth page, render it standalone (no header/footer)
+  if (location.pathname.startsWith('/auth')) {
     return (
-      <div
-        className="min-h-screen bg-gray-50"
-        style={{
-          backgroundImage: "url(/background.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-        }}
-      >
+      <>
+        <ConsentModal onConsent={handleConsent} />
         <Auth
           defaultTab="login"
           onAuthenticated={() => {
@@ -132,15 +174,29 @@ function AppContent() {
             navigate("/");
           }}
         />
-      </div>
+      </>
     );
   }
 
-  const isActive = (path: string) => location.pathname === path;
-
   return (
     <>
-      <ConsentModal locale={locale} onConsent={handleConsent} />
+      {showMigrationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black opacity-40" />
+          <div className="bg-white p-6 rounded shadow-lg z-10 max-w-lg">
+            <h3 className="text-lg font-semibold">Migrate local records</h3>
+            <p className="mt-2 text-sm text-gray-700">
+              We found {pendingLocalCount} local assessment{pendingLocalCount === 1 ? '' : 's'} stored on this device. You can copy them to your account to access them from other devices.
+            </p>
+            <div className="mt-4 flex gap-3 justify-end">
+              <Button variant="outline" onClick={handleKeepLocal}>Keep local</Button>
+              <Button onClick={handleMigrateNow} disabled={isMigrating}>
+                {isMigrating ? 'Migrating...' : 'Migrate now'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div
         className="min-h-screen bg-gray-50"
@@ -184,8 +240,8 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive("/")}
                     >
-                      <HomeIcon className="mr-2 h-4 w-4" aria-hidden /> Home
-                    </Button>
+                      <HomeIcon className="mr-2 h-4 w-4" aria-hidden /> {t('navHome')}
+                     </Button>
                   </Link>
                   <Link to="/phq9">
                     <Button
@@ -200,7 +256,7 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive("/phq9")}
                     >
-                      <ReaderIcon className="mr-2 h-4 w-4" aria-hidden /> PHQ-9
+                      <ReaderIcon className="mr-2 h-4 w-4" aria-hidden /> {t('phq9Title')}
                     </Button>
                   </Link>
                   <Link to="/diary">
@@ -216,7 +272,7 @@ function AppContent() {
                       role="tab"
                       aria-selected={isActive("/diary")}
                     >
-                      <Pencil2Icon className="mr-2 h-4 w-4" aria-hidden /> Diary
+                      <Pencil2Icon className="mr-2 h-4 w-4" aria-hidden /> {t('diaryTitle')}
                     </Button>
                   </Link>
                   <Link to="/history">
@@ -231,9 +287,8 @@ function AppContent() {
                       aria-current={isActive("/history") ? "page" : undefined}
                       role="tab"
                       aria-selected={isActive("/history")}
-                    >
-                      <ActivityLogIcon className="mr-2 h-4 w-4" aria-hidden />{" "}
-                      History
+                      >
+                      <ActivityLogIcon className="mr-2 h-4 w-4" aria-hidden /> {t('historyTitle')}
                     </Button>
                   </Link>
                   <Link to="/settings">
@@ -248,57 +303,58 @@ function AppContent() {
                       aria-current={isActive("/settings") ? "page" : undefined}
                       role="tab"
                       aria-selected={isActive("/settings")}
-                    >
-                      <GearIcon className="mr-2 h-4 w-4" aria-hidden /> Settings
+                      >
+                      <GearIcon className="mr-2 h-4 w-4" aria-hidden /> {t('settingsTitle')}
                     </Button>
                   </Link>
-                  <Button
-                    variant="ghost"
-                    onClick={handleLogout}
-                    className="text-gray-700 hover:text-gray-900 rounded-full px-4 py-2 focus-visible:ring-indigo-400"
-                  >
-                    <ExitIcon className="mr-2 h-4 w-4" aria-hidden /> Logout
-                  </Button>
+                  {isAuthenticated ? (
+                    <Button
+                      variant="ghost"
+                      onClick={handleLogout}
+                      className="text-gray-700 hover:text-gray-900 rounded-full px-4 py-2 focus-visible:ring-indigo-400"
+                    >
+                      <ExitIcon className="mr-2 h-4 w-4" aria-hidden /> {t('logoutButton')}
+                    </Button>
+                  ) : (
+                    <Link to="/auth">
+                      <Button
+                        variant="ghost"
+                        className="text-gray-700 hover:text-gray-900 rounded-full px-4 py-2 focus-visible:ring-indigo-400"
+                      >
+                        <ExitIcon className="mr-2 h-4 w-4" aria-hidden /> {t('loginButton')}
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </nav>
             </div>
           </header>
           <main id="main-content" className="py-8 px-4" role="main">
             <Routes>
-              <Route path="/" element={<Home locale={locale} />} />
-              <Route path="/phq9" element={<PHQ9 locale={locale} />} />
-              <Route path="/diary" element={<Diary locale={locale} />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/phq9" element={<PHQ9 />} />
+              <Route path="/diary" element={<Diary />} />
+              <Route path="/diary/all" element={<AllDiaries />} />
+              <Route path="/diary/:date" element={<DiaryView />} />
+              <Route path="/history" element={<History onExportPDF={handleExportPDF} />} />
+              <Route path="/settings" element={<Settings onLocaleChange={handleLocaleChange} />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
               <Route
-                path="/diary/all"
-                element={<AllDiaries locale={locale} />}
-              />
-              <Route
-                path="/diary/:date"
-                element={<DiaryView locale={locale} />}
-              />
-              <Route
-                path="/history"
+                path="/auth"
                 element={
-                  <History locale={locale} onExportPDF={handleExportPDF} />
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <Settings
-                    locale={locale}
-                    onLocaleChange={handleLocaleChange}
+                  <Auth
+                    defaultTab="login"
+                    onAuthenticated={() => {
+                      setIsAuthenticated(true);
+                      navigate("/");
+                    }}
                   />
                 }
-              />
-              <Route
-                path="/privacy"
-                element={<PrivacyPage locale={locale} />}
               />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
-          <Footer locale={locale} />
+          <Footer />
         </div>
       </div>
     </>
@@ -308,7 +364,9 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

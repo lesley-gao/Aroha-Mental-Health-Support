@@ -1,181 +1,141 @@
 # Page snapshot
 
 ```yaml
-- generic:
-  - link:
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
     - /url: "#main-content"
-    - text: Skip to main content
-  - generic:
-    - generic:
-      - generic:
-        - banner:
-          - heading [level=1]: Aroha - Mental Health Support
-          - navigation:
-            - button: PHQ-9
-            - button: History
-            - button: Settings
-            - button: Privacy
-        - main:
-          - generic:
-            - generic:
-              - generic:
-                - generic: PHQ-9 Assessment
-                - generic: Over the last 2 weeks, how often have you been bothered by any of the following problems?
-              - generic:
-                - generic: This tool is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.
-                - generic:
-                  - generic:
-                    - generic: 1. Little interest or pleasure in doing things
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 2. Feeling down, depressed, or hopeless
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 3. Trouble falling or staying asleep, or sleeping too much
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 4. Feeling tired or having little energy
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 5. Poor appetite or overeating
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 6. Feeling bad about yourself — or that you are a failure or have let yourself or your family down
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 7. Trouble concentrating on things, such as reading the newspaper or watching television
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 8. Moving or speaking so slowly that other people could have noticed. Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                  - generic:
-                    - generic: 9. Thoughts that you would be better off dead, or of hurting yourself in some way
-                    - radiogroup:
-                      - generic:
-                        - radio
-                        - generic: Not at all
-                      - generic:
-                        - radio
-                        - generic: Several days
-                      - generic:
-                        - radio
-                        - generic: More than half the days
-                      - generic:
-                        - radio
-                        - generic: Nearly every day
-                - generic:
-                  - button [disabled]: Submit
-  - dialog "Privacy & Consent" [ref=e2]:
-    - generic [ref=e3]:
-      - heading "Privacy & Consent" [level=2] [ref=e4]
-      - paragraph [ref=e5]:
-        - paragraph [ref=e6]: Your responses are stored only on this device. No data is sent to external servers without your explicit consent. You can export your data as a PDF or JSON file to share with a healthcare provider. You can delete all your data at any time from the Privacy settings.
-        - generic [ref=e7]:
-          - heading "What you should know:" [level=4] [ref=e8]
-          - list [ref=e9]:
-            - listitem [ref=e10]: Your data never leaves this device automatically
-            - listitem [ref=e11]: No account or login required
-            - listitem [ref=e12]: You control all exports and sharing
-            - listitem [ref=e13]: Delete your data anytime from Privacy settings
-        - paragraph [ref=e14]: This tool is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.
-    - button "I understand and consent" [active] [ref=e16]
-    - button "Close" [ref=e17]:
-      - img [ref=e18]
-      - generic [ref=e21]: Close
+  - generic [ref=e5]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - link "Aroha - Mental Health Support" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "Aroha - Mental Health Support" [ref=e9]
+        - navigation "Main navigation" [ref=e10]:
+          - tablist "Section tabs" [ref=e11]:
+            - link "Home" [ref=e12] [cursor=pointer]:
+              - /url: /
+              - tab "Home" [selected] [ref=e13]:
+                - img
+                - text: Home
+            - link "PHQ-9 Assessment" [ref=e14] [cursor=pointer]:
+              - /url: /phq9
+              - tab "PHQ-9 Assessment" [ref=e15]:
+                - img
+                - text: PHQ-9 Assessment
+            - link "Personal Diary" [ref=e16] [cursor=pointer]:
+              - /url: /diary
+              - tab "Personal Diary" [ref=e17]:
+                - img
+                - text: Personal Diary
+            - link "History" [ref=e18] [cursor=pointer]:
+              - /url: /history
+              - tab "History" [ref=e19]:
+                - img
+                - text: History
+            - link "Settings" [ref=e20] [cursor=pointer]:
+              - /url: /settings
+              - tab "Settings" [ref=e21]:
+                - img
+                - text: Settings
+            - link "Login" [ref=e22] [cursor=pointer]:
+              - /url: /auth
+              - button "Login" [ref=e23]:
+                - img
+                - text: Login
+    - main [ref=e24]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - img "Mental wellness illustration" [ref=e28]
+          - generic [ref=e29]:
+            - heading "Your Journey to Wellbeing Starts Here" [level=1] [ref=e30]
+            - paragraph [ref=e31]: Track your mental health, journal your thoughts, and gain insights with Aroha - a free, private tool designed for young New Zealanders.
+            - link "Get Started" [ref=e32] [cursor=pointer]:
+              - /url: /phq9
+              - button "Get Started" [ref=e33]:
+                - img
+                - text: Get Started
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - img [ref=e39]
+            - heading "PHQ-9 Assessment" [level=3] [ref=e41]
+            - paragraph [ref=e42]: Take a clinically-validated depression screening to understand your mental wellbeing.
+            - img "Assessment" [ref=e44]
+            - link "Take Assessment" [ref=e45] [cursor=pointer]:
+              - /url: /phq9
+              - button "Take Assessment" [ref=e46]:
+                - text: Take Assessment
+                - img
+          - generic [ref=e47]:
+            - img [ref=e51]
+            - heading "Personal Diary" [level=3] [ref=e53]
+            - paragraph [ref=e54]: Express your thoughts with voice-to-text and AI-powered emotional summaries.
+            - img "Diary" [ref=e56]
+            - link "Start Writing" [ref=e57] [cursor=pointer]:
+              - /url: /diary
+              - button "Start Writing" [ref=e58]:
+                - text: Start Writing
+                - img
+          - generic [ref=e59]:
+            - img [ref=e63]
+            - heading "Assessment History" [level=3] [ref=e65]
+            - paragraph [ref=e66]: Visualize your mental health journey with beautiful charts and trend analysis.
+            - img "Progress Diagram" [ref=e68]
+            - link "View Progress" [ref=e69] [cursor=pointer]:
+              - /url: /history
+              - button "View Progress" [ref=e70]:
+                - text: View Progress
+                - img
+        - generic [ref=e71]:
+          - heading "Why Choose Aroha?" [level=2] [ref=e72]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - img [ref=e77]
+              - generic [ref=e79]:
+                - heading "Private & Secure" [level=4] [ref=e80]
+                - paragraph [ref=e81]: Your data stays with you. Export or delete anytime. Optional cloud sync with encryption.
+            - generic [ref=e82]:
+              - img [ref=e85]
+              - generic [ref=e87]:
+                - heading "Track & Export" [level=4] [ref=e88]
+                - paragraph [ref=e89]: Track your mood daily and export your data as PDF or JSON for future clinical records and healthcare provider visits.
+            - generic [ref=e90]:
+              - img [ref=e93]
+              - generic [ref=e96]:
+                - heading "AI-Powered Insights" [level=4] [ref=e97]
+                - paragraph [ref=e98]: Voice-to-text diary entries with emotional keyword detection and smart summaries.
+            - generic [ref=e99]:
+              - img [ref=e102]
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - heading "NZ-Focused Resources" [level=4] [ref=e106]
+                  - generic [ref=e107]: Coming soon
+                - paragraph [ref=e108]: Curated mental health resources and crisis support specific to Aotearoa New Zealand.
+        - generic [ref=e109]:
+          - heading "Get Started in 3 Simple Steps" [level=2] [ref=e110]
+          - paragraph [ref=e111]: Begin your journey to better mental health today
+          - generic [ref=e112]:
+            - generic [ref=e113]:
+              - generic [ref=e114]: "1"
+              - generic [ref=e115]: Take your first PHQ-9 assessment
+            - generic [ref=e116]: →
+            - generic [ref=e117]:
+              - generic [ref=e118]: "2"
+              - generic [ref=e119]: Write a diary entry about your day
+            - generic [ref=e120]: →
+            - generic [ref=e121]:
+              - generic [ref=e122]: "3"
+              - generic [ref=e123]: Track your progress over time
+          - link "Begin Your Journey" [ref=e124] [cursor=pointer]:
+            - /url: /phq9
+            - button "Begin Your Journey" [ref=e125]:
+              - img
+              - text: Begin Your Journey
+    - contentinfo [ref=e126]:
+      - generic [ref=e128]:
+        - img "Community support illustration" [ref=e130]
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - paragraph [ref=e133]: You're not alone on this journey. Every step counts.
+            - paragraph [ref=e134]: This tool is for self-monitoring only. If you're in crisis, please call 1737 for support.
+          - paragraph [ref=e135]: © 2025 Aroha • Made with love in Aotearoa 🇳🇿
 ```

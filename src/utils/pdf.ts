@@ -5,15 +5,17 @@
 
 import jsPDF from 'jspdf';
 import { type PHQ9Record } from './storage';
+import { getMessages, type Locale } from '@/i18n/messages';
 
 /**
  * Generate and download a PDF summary of PHQ-9 assessment records
  * @param records - Array of PHQ9Record objects to include in the PDF
  * @param locale - Language locale for header text ('en' or 'mi')
  */
-export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = 'en'): Promise<void> {
+export async function generatePDF(records: PHQ9Record[], locale: Locale = 'en'): Promise<void> {
   if (records.length === 0) {
-    alert(locale === 'en' ? 'No records to export' : 'Kāore he rēkōtanga hei kaweake');
+    const msg = getMessages(locale);
+    alert(msg.historyEmpty || (locale === 'en' ? 'No records to export' : 'Kāore he rēkōtanga hei kaweake'));
     return;
   }
 
@@ -85,33 +87,27 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
   // Title
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
-  doc.text(
-    locale === 'en' ? 'PHQ-9 Assessment Summary' : 'Whakarāpopoto Aromatawai PHQ-9',
-    margin,
-    yPosition
-  );
+  const msg = getMessages(locale);
+  doc.text(msg.phq9Title || (locale === 'en' ? 'PHQ-9 Assessment Summary' : 'Whakarāpopoto Aromatawai PHQ-9'), margin, yPosition);
   yPosition += 12;
 
   // Subtitle
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   const now = new Date();
-  const exportDate = now.toLocaleDateString('en-NZ', {
+  const dateLocale = locale === 'mi' ? 'mi-NZ' : locale === 'zh' ? 'zh-CN' : 'en-NZ';
+  const exportDate = now.toLocaleDateString(dateLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
-  doc.text(
-    locale === 'en' ? `Exported: ${exportDate}` : `Kawea: ${exportDate}`,
-    margin,
-    yPosition
-  );
+  doc.text(`${msg.historyTitle ? msg.historyTitle + ' - ' : ''} ${exportDate}`, margin, yPosition);
   yPosition += 10;
 
   // Summary statistics
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text(locale === 'en' ? 'Summary Statistics' : 'Tātauranga Whakarāpopoto', margin, yPosition);
+  doc.text(msg.historyTitle || (locale === 'en' ? 'Summary Statistics' : 'Tātauranga Whakarāpopoto'), margin, yPosition);
   yPosition += lineHeight;
 
   doc.setFont('helvetica', 'normal');
@@ -150,9 +146,9 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
   checkPageBreak(15);
   doc.setFontSize(8);
   doc.setTextColor(100, 100, 100);
-  const disclaimer = locale === 'en'
+  const disclaimer = msg.disclaimer || (locale === 'en'
     ? 'This tool is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.'
-    : 'He taputapu whakamōhiotanga anake tēnei, ehara i te whakakapi mō te tohutohu rata ngaio, te taumate, te maimoatanga rānei.';
+    : 'He taputapu whakamōhiotanga anake tēnei, ehara i te whakakapi mō te tohutohu rata ngaio, te taumate, te maimoatanga rānei.');
   const disclaimerLines = doc.splitTextToSize(disclaimer, pageWidth - 2 * margin);
   doc.text(disclaimerLines, margin, yPosition);
   yPosition += disclaimerLines.length * 4 + 5;
@@ -162,7 +158,7 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
   checkPageBreak(20);
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text(locale === 'en' ? 'Assessment History' : 'Hītori Aromatawai', margin, yPosition);
+  doc.text(msg.historyTitle || (locale === 'en' ? 'Assessment History' : 'Hītori Aromatawai'), margin, yPosition);
   yPosition += lineHeight + 2;
 
   // Table header
@@ -175,7 +171,7 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
   const col5 = margin + 120;
 
   doc.text('#', col1, yPosition);
-  doc.text(locale === 'en' ? 'Date' : 'Rā', col2, yPosition);
+  doc.text(msg.phq9InfoTitle ? 'Date' : (locale === 'en' ? 'Date' : 'Rā'), col2, yPosition);
   doc.text(locale === 'en' ? 'Score' : 'Kaute', col3, yPosition);
   doc.text(locale === 'en' ? 'Severity' : 'Taimaha', col4, yPosition);
   doc.text(locale === 'en' ? 'Answers' : 'Whakautu', col5, yPosition);
@@ -195,7 +191,7 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
 
     const recordNum = (index + 1).toString();
     const date = new Date(record.createdAt);
-    const dateStr = date.toLocaleDateString('en-NZ', {
+    const dateStr = date.toLocaleDateString(dateLocale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -203,7 +199,7 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
       minute: '2-digit',
     });
     const score = `${record.total}/27`;
-    const severity = getSeverityTranslation(record.severity, locale);
+  const severity = getSeverityTranslation(record.severity, locale);
     const answers = record.answers.join(', ');
 
     doc.text(recordNum, col1, yPosition);
@@ -242,7 +238,7 @@ export async function generatePDF(records: PHQ9Record[], locale: 'en' | 'mi' = '
 /**
  * Get translated severity label
  */
-function getSeverityTranslation(severity: string, locale: 'en' | 'mi'): string {
+function getSeverityTranslation(severity: string, locale: Locale): string {
   if (locale === 'mi') {
     switch (severity) {
       case 'Minimal': return 'Iti rawa';
@@ -253,5 +249,17 @@ function getSeverityTranslation(severity: string, locale: 'en' | 'mi'): string {
       default: return severity;
     }
   }
+
+  if (locale === 'zh') {
+    switch (severity) {
+      case 'Minimal': return '极轻';
+      case 'Mild': return '轻度';
+      case 'Moderate': return '中度';
+      case 'Moderately severe': return '中重度';
+      case 'Severe': return '重度';
+      default: return severity;
+    }
+  }
+
   return severity;
 }

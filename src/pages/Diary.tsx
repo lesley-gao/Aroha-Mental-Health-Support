@@ -16,7 +16,7 @@ import {
 import { Save, Calendar, X, ArrowUp } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { BrowserSpeechToText } from '@/components/speech/BrowserSpeechToText';
-import type { Locale } from '@/i18n/messages';
+import { useTranslation } from '@/i18n/useTranslation';
 
 interface DiaryEntry {
   id: string;
@@ -28,12 +28,11 @@ interface DiaryEntry {
   updated_at: string;
 }
 
-interface DiaryProps {
-  locale: Locale;
-}
+export default function Diary() {
 
-export default function Diary({ locale }: DiaryProps) {
+  // component state
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
   const [currentTitle, setCurrentTitle] = useState('');
   const [currentEntry, setCurrentEntry] = useState('');
   const [aiSummary, setAiSummary] = useState('');
@@ -42,47 +41,9 @@ export default function Diary({ locale }: DiaryProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t, locale } = useTranslation();
 
-  const translations = {
-    en: {
-      title: 'My Diary',
-      subtitle: 'Record your thoughts and feelings',
-      entryTitle: 'Entry Title',
-      titlePlaceholder: 'Give your entry a title...',
-      placeholder: 'Write your thoughts here...',
-      save: 'Save Entry',
-      saved: 'Entry Saved',
-      clear: 'Clear',
-      clearConfirm: 'Are you sure you want to clear this entry?',
-      noEntries: 'No entries yet. Start writing!',
-      selectDate: 'Select Date',
-      characters: 'characters',
-      aiSummary: 'AI Summary',
-      clearSummary: 'Clear',
-      insertSummary: 'Add to Entry',
-      showAllDiaries: 'Show All Diaries'
-    },
-    mi: {
-      title: 'Taku Pukapuka',
-      subtitle: 'Tuhia ō whakaaro me ō kare-ā-roto',
-      entryTitle: 'Taitara Tuhinga',
-      titlePlaceholder: 'Hoatu he taitara ki tō tuhinga...',
-      placeholder: 'Tuhia ō whakaaro ki konei...',
-      save: 'Tiaki Tuhinga',
-      saved: 'Kua Tiakina',
-      clear: 'Whakakore',
-      clearConfirm: 'Kei te tino hiahia koe ki te whakakore i tēnei tuhinga?',
-      noEntries: 'Kāore anō kia tuhia. Tīmataria!',
-      selectDate: 'Kōwhiri Rā',
-      characters: 'reta',
-      aiSummary: 'Whakarāpopoto AI',
-      clearSummary: 'Whakakore',
-      insertSummary: 'Tāpiri ki te Tuhinga',
-      showAllDiaries: 'Whakaatu Ngā Pukapuka Katoa'
-    }
-  };
-
-  const t = translations[locale as keyof typeof translations] || translations.en;
+  const dateLocale = locale === 'mi' ? 'mi-NZ' : locale === 'zh' ? 'zh-CN' : 'en-NZ';
 
   useEffect(() => {
     loadEntries();
@@ -101,19 +62,36 @@ export default function Diary({ locale }: DiaryProps) {
   const loadEntries = async () => {
     setIsLoading(true);
     try {
-      if (!supabase) return;
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      // Try to detect authenticated user; if none, fall back to localStorage entries
+      if (supabase) {
+        const { data: { user } } = await supabase.auth.getUser();
+        setIsAuthenticatedUser(!!user);
+        if (user) {
+          const { data, error } = await supabase
+            .from('diary_entries')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('entry_date', { ascending: false });
 
-      const { data, error } = await supabase
-        .from('diary_entries')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('entry_date', { ascending: false });
+          if (error) throw error;
+          setEntries(data || []);
+          return;
+        }
+  }
 
-      if (error) throw error;
-      setEntries(data || []);
+      // No authenticated user - load from localStorage
+      const raw = localStorage.getItem('local_diary_entries');
+      if (!raw) {
+        setEntries([]);
+      } else {
+        try {
+          const parsed = JSON.parse(raw) as DiaryEntry[];
+          setEntries(parsed || []);
+        } catch (err) {
+          console.error('Error parsing local diary entries:', err);
+          setEntries([]);
+        }
+      }
     } catch (error) {
       console.error('Error loading diary entries:', error);
     } finally {
@@ -152,28 +130,60 @@ export default function Diary({ locale }: DiaryProps) {
   const saveEntry = async () => {
     setIsSaving(true);
     try {
-      if (!supabase) return;
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (supabase) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error } = await supabase
+            .from('diary_entries')
+            .upsert({
+              user_id: user.id,
+              entry_date: selectedDate,
+              title: currentTitle,
+              content: currentEntry,
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'user_id,entry_date'
+            });
 
-      const { error } = await supabase
-        .from('diary_entries')
-        .upsert({
-          user_id: user.id,
+          if (error) throw error;
+
+          // Reload entries to update the list
+          await loadEntries();
+        } else {
+          // No user - save locally
+          const raw = localStorage.getItem('local_diary_entries');
+          const localEntries = raw ? (JSON.parse(raw) as DiaryEntry[]) : [];
+          const newEntry: DiaryEntry = {
+            id: crypto.randomUUID(),
+            user_id: '',
+            entry_date: selectedDate,
+            title: currentTitle,
+            content: currentEntry,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          localEntries.unshift(newEntry);
+          localStorage.setItem('local_diary_entries', JSON.stringify(localEntries));
+          setEntries(localEntries);
+        }
+      } else {
+        // No supabase configured - save locally
+        const raw = localStorage.getItem('local_diary_entries');
+        const localEntries = raw ? (JSON.parse(raw) as DiaryEntry[]) : [];
+        const newEntry: DiaryEntry = {
+          id: crypto.randomUUID(),
+          user_id: '',
           entry_date: selectedDate,
           title: currentTitle,
           content: currentEntry,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,entry_date'
-        });
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        localEntries.unshift(newEntry);
+        localStorage.setItem('local_diary_entries', JSON.stringify(localEntries));
+        setEntries(localEntries);
+      }
 
-      if (error) throw error;
-      
-      // Reload entries to update the list
-      await loadEntries();
-      
       // Clear the form fields and AI summary after successful save
       setCurrentTitle('');
       setCurrentEntry('');
@@ -196,8 +206,8 @@ export default function Diary({ locale }: DiaryProps) {
   };
 
   const handleClearEntry = () => {
-    if (currentEntry.trim() || currentTitle.trim()) {
-      if (window.confirm(t.clearConfirm)) {
+      if (currentEntry.trim() || currentTitle.trim()) {
+      if (window.confirm(String(t('diaryClearConfirm'))) ) {
         setCurrentTitle('');
         setCurrentEntry('');
         setAiSummary('');
@@ -227,8 +237,20 @@ export default function Diary({ locale }: DiaryProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t.title}</h1>
-        <p className="text-gray-600">{t.subtitle}</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('diaryPageTitle')}</h1>
+        <p className="text-gray-600">{t('diarySubtitle')}</p>
+        {!isAuthenticatedUser && (
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-gray-800">
+              {t('diaryLocalNotice')}
+            </p>
+            <div className="mt-3">
+              <a href="/auth">
+                <Button variant="default">{t('diaryLoginCreate')}</Button>
+              </a>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -238,7 +260,7 @@ export default function Diary({ locale }: DiaryProps) {
             <div className="mb-4 flex items-center justify-between">
               <label htmlFor="entry-date" className="text-base font-medium text-gray-700 flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />
-                {t.selectDate}
+                {t('diarySelectDate')}
               </label>
               <input
                 id="entry-date"
@@ -251,14 +273,14 @@ export default function Diary({ locale }: DiaryProps) {
 
             <div className="mb-4">
               <label htmlFor="entry-title" className="text-base font-medium text-gray-700 mb-2 block">
-                {t.entryTitle}
+                {t('diaryEntryTitle')}
               </label>
               <Input
                 id="entry-title"
                 type="text"
                 value={currentTitle}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentTitle(e.target.value)}
-                placeholder={t.titlePlaceholder}
+                placeholder={String(t('diaryTitlePlaceholder'))}
                 className="w-full "
               />
             </div>
@@ -266,7 +288,7 @@ export default function Diary({ locale }: DiaryProps) {
             <Textarea
               value={currentEntry}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentEntry(e.target.value)}
-              placeholder={t.placeholder}
+              placeholder={String(t('diaryPlaceholder'))}
               className="min-h-[400px] mb-4 resize-none"
             />
 
@@ -274,7 +296,6 @@ export default function Diary({ locale }: DiaryProps) {
             <div className="mb-4">
               <BrowserSpeechToText 
                 onTranscript={handleSpeechTranscript}
-                locale={locale}
                 showSummary={true}
                 onSummary={(summary: string) => {
                   setAiSummary(summary);
@@ -287,20 +308,20 @@ export default function Diary({ locale }: DiaryProps) {
             {aiSummary && (
               <div className="mb-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-base font-medium text-indigo-900">✨ {t.aiSummary}</span>
+                  <span className="text-base font-medium text-indigo-900">✨ {t('aiSummary')}</span>
                   <div className="ml-auto flex items-center gap-2">
-                    <Button
+                      <Button
                       onClick={handleInsertSummary}
                       size="sm"
                       className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
                     >
                       <ArrowUp className="w-4 h-4" />
-                      {t.insertSummary}
+                      {t('diaryInsertSummary')}
                     </Button>
                     <button
                       onClick={() => setAiSummary('')}
                       className="p-1.5 text-indigo-500 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition-colors"
-                      aria-label={t.clearSummary}
+                      aria-label={String(t('diaryClearSummary'))}
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -314,7 +335,7 @@ export default function Diary({ locale }: DiaryProps) {
 
             <div className="flex items-center justify-between">
               <span className="text-base text-gray-500">
-                {currentEntry.length} {t.characters}
+                {currentEntry.length} {t('diaryCharacters')}
               </span>
               <div className="flex gap-2">
                 <Button
@@ -324,7 +345,7 @@ export default function Diary({ locale }: DiaryProps) {
                   className="flex items-center"
                 >
                   <X className="w-4 h-4 mr-2" />
-                  {t.clear}
+                  {t('diaryClear')}
                 </Button>
                 <Button
                   onClick={saveEntry}
@@ -332,7 +353,7 @@ export default function Diary({ locale }: DiaryProps) {
                   className="flex items-center"
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {isSaving ? t.saved : t.save}
+                  {isSaving ? t('diarySaved') : t('diarySaveEntry')}
                 </Button>
               </div>
             </div>
@@ -342,12 +363,12 @@ export default function Diary({ locale }: DiaryProps) {
         {/* Recent entries sidebar - Timeline */}
         <div className="lg:col-span-1">
           <Card className="p-6 bg-white/30">
-            <h2 className="text-lg font-semibold mb-6 text-gray-900">Recent Entries</h2>
+            <h2 className="text-lg font-semibold mb-6 text-gray-900">{t('diaryRecentEntries')}</h2>
             
             {isLoading ? (
               <div className="text-center text-gray-500 py-4">Loading...</div>
             ) : entries.length === 0 ? (
-              <div className="text-center text-gray-500 py-4 text-base">{t.noEntries}</div>
+              <div className="text-center text-gray-500 py-4 text-base">{t('diaryNoEntries')}</div>
             ) : (
               <>
                 <Timeline>
@@ -360,7 +381,7 @@ export default function Diary({ locale }: DiaryProps) {
                           className="w-full text-left group"
                         >
                           <TimelineTime className={entry.entry_date === selectedDate ? 'text-indigo-600' : ''}>
-                            {new Date(entry.entry_date).toLocaleDateString(locale === 'mi' ? 'mi-NZ' : 'en-NZ', {
+                              {new Date(entry.entry_date).toLocaleDateString(dateLocale, {
                               weekday: 'short',
                               month: 'short',
                               day: 'numeric'
@@ -379,7 +400,7 @@ export default function Diary({ locale }: DiaryProps) {
                           onClick={() => navigate(`/diary/${entry.entry_date}`)}
                           className="text-sm text-right text-indigo-500 hover:text-indigo-800 hover:underline mt-2"
                         >
-                          View Full
+                          {t('diaryViewFull')}
                         </button>
                       </TimelineContent>
                     </TimelineItem>
@@ -390,7 +411,7 @@ export default function Diary({ locale }: DiaryProps) {
                     onClick={() => navigate('/diary/all')}
                     className="text-base text-indigo-500 hover:text-indigo-800 hover:underline mt-4 w-full text-center"
                   >
-                    {t.showAllDiaries}
+                    {t('diaryShowAllDiaries')}
                   </button>
                 )}
               </>

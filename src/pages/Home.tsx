@@ -10,14 +10,10 @@ import {
   LockClosedIcon,
 } from "@radix-ui/react-icons";
 import { Wand2, Send } from "lucide-react";
-import type { Locale } from "@/i18n/messages";
+import { useTranslation } from "@/i18n/useTranslation";
 
-interface HomeProps {
-  locale: Locale;
-}
-
-export function Home({ locale }: HomeProps) {
-  const t = getTranslations(locale);
+export function Home() {
+  const { t } = useTranslation();
 
   return (
     <>
@@ -36,10 +32,10 @@ export function Home({ locale }: HomeProps) {
           {/* Hero Text and CTA - Right */}
           <div className="order-1 md:order-2 flex flex-col justify-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-              {t.heroTitle}
+              {t("heroTitle")}
             </h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-              {t.heroSubtitle}
+              {t("heroSubtitle")}
             </p>
             <Link to="/phq9">
               <Button
@@ -47,7 +43,7 @@ export function Home({ locale }: HomeProps) {
                 className="text-lg px-8 py-6 gap-2 shadow-lg hover:shadow-xl transition-shadow w-full md:w-auto"
               >
                 <RocketIcon className="h-5 w-5" />
-                {t.getStarted}
+                {t("getStarted")}
               </Button>
             </Link>
           </div>
@@ -64,17 +60,21 @@ export function Home({ locale }: HomeProps) {
               </div>
             </div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-              {t.phq9Title}
+              {t("phq9Title")}
             </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-base min-h-[80px]">
-              {t.phq9Description}
+            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-base min-h-20">
+              {t("phq9Description")}
             </p>
             <div className="mb-4 h-48 md:h-56 rounded-xl flex items-center justify-center">
-              <img src="/assessment.png" alt="Assessment" className="h-full w-auto object-contain rounded-2xl" />
+              <img
+                src="/assessment.png"
+                alt="Assessment"
+                className="h-full w-auto object-contain rounded-2xl"
+              />
             </div>
             <Link to="/phq9">
               <Button variant="teal" className="w-full gap-2" size="lg">
-                {t.takeAssessment}
+                {t("takeAssessment")}
                 <LightningBoltIcon className="h-4 w-4" />
               </Button>
             </Link>
@@ -89,17 +89,21 @@ export function Home({ locale }: HomeProps) {
               </div>
             </div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-              {t.diaryTitle}
+              {t("diaryTitle")}
             </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-base min-h-[80px]">
-              {t.diaryDescription}
+            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-base min-h-20">
+              {t("diaryDescription")}
             </p>
             <div className="mb-4 h-48 md:h-56 rounded-xl flex items-center justify-center">
-              <img src="/diary.png" alt="Diary" className="h-full w-auto object-contain rounded-2xl" />
+              <img
+                src="/diary.png"
+                alt="Diary"
+                className="h-full w-auto object-contain rounded-2xl"
+              />
             </div>
             <Link to="/diary">
               <Button variant="teal" className="w-full gap-2" size="lg">
-                {t.startWriting}
+                {t("startWriting")}
                 <Pencil2Icon className="h-4 w-4" />
               </Button>
             </Link>
@@ -114,17 +118,21 @@ export function Home({ locale }: HomeProps) {
               </div>
             </div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-              {t.historyTitle}
+              {t("historyTitle")}
             </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-base min-h-[80px]">
-              {t.historyDescription}
+            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-base min-h-20">
+              {t("historyDescription")}
             </p>
             <div className="mb-4 h-48 md:h-56 rounded-xl flex items-center justify-center">
-              <img src="/diagram.png" alt="Progress Diagram" className="h-full w-auto object-contain rounded-2xl" />
+              <img
+                src="/diagram.png"
+                alt="Progress Diagram"
+                className="h-full w-auto object-contain rounded-2xl"
+              />
             </div>
             <Link to="/history">
               <Button variant="teal" className="w-full gap-2" size="lg">
-                {t.viewProgress}
+                {t("viewProgress")}
                 <ActivityLogIcon className="h-4 w-4" />
               </Button>
             </Link>
@@ -134,7 +142,7 @@ export function Home({ locale }: HomeProps) {
         {/* Why Aroha Section - Cultural Elements */}
         <div className=" rounded-3xl py-8 md:py-12 text-gray-900 lg:mb-30 mb-20 ">
           <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-            {t.whyArohaTitle}
+            {t("whyArohaTitle")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <div className="flex gap-4 bg-linear-to-r from-indigo-100/30 via-purple-100/30 to-pink-100/30  backdrop-blur-sm rounded-xl p-6 hover:bg-white/40 transition-colors shadow-lg border-2 border-indigo-100">
@@ -145,10 +153,10 @@ export function Home({ locale }: HomeProps) {
               </div>
               <div>
                 <h4 className="font-semibold text-lg mb-2 text-gray-900">
-                  {t.privateSecureTitle}
+                  {t("privateSecureTitle")}
                 </h4>
                 <p className="text-gray-700 text-base leading-relaxed">
-                  {t.privateSecureDesc}
+                  {t("privateSecureDesc")}
                 </p>
               </div>
             </div>
@@ -161,10 +169,10 @@ export function Home({ locale }: HomeProps) {
               </div>
               <div>
                 <h4 className="font-semibold text-lg mb-2 text-gray-900">
-                  {t.insightsTitle}
+                  {t("insightsTitle")}
                 </h4>
                 <p className="text-gray-700 text-base leading-relaxed">
-                  {t.insightsDesc}
+                  {t("insightsDesc")}
                 </p>
               </div>
             </div>
@@ -176,10 +184,10 @@ export function Home({ locale }: HomeProps) {
               </div>
               <div>
                 <h4 className="font-semibold text-lg mb-2 text-gray-900">
-                  {t.aiPoweredTitle}
+                  {t("aiPoweredTitle")}
                 </h4>
                 <p className="text-gray-700 text-base leading-relaxed">
-                  {t.aiPoweredDesc}
+                  {t("aiPoweredDesc")}
                 </p>
               </div>
             </div>
@@ -192,14 +200,14 @@ export function Home({ locale }: HomeProps) {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <h4 className="font-semibold text-lg text-gray-900">
-                    {t.nzFocusedTitle}
+                    {t("nzFocusedTitle")}
                   </h4>
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-gray-700 border border-white">
                     Coming soon
                   </span>
                 </div>
                 <p className="text-gray-700 text-base leading-relaxed">
-                  {t.nzFocusedDesc}
+                  {t("nzFocusedDesc")}
                 </p>
               </div>
             </div>
@@ -209,16 +217,18 @@ export function Home({ locale }: HomeProps) {
         {/* Quick Start Guide - Journey Visualization */}
         <div className="text-center lg:mb-30 mb-20">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-            {t.quickStartTitle}
+            {t("quickStartTitle")}
           </h2>
-          <p className="text-gray-600 mb-12 text-lg">{t.quickStartSubtitle}</p>
+          <p className="text-gray-600 mb-12 text-lg">
+            {t("quickStartSubtitle")}
+          </p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-20 mx-auto">
             <div className="flex items-center gap-4 bg-white/30 p-6 rounded-2xl shadow-md hover:shadow-lg  hover:scale-105 transition-shadow w-full md:w-96 h-36 border-2 border-indigo-100">
               <div className="w-12 h-12 bg-[#D1F08B] text-black rounded-full flex items-center justify-center font-bold text-lg shrink-0">
                 1
               </div>
               <span className="text-gray-700 font-medium text-left">
-                {t.step1}
+                {t("step1")}
               </span>
             </div>
             <div className="hidden md:block text-gray-400 text-2xl">→</div>
@@ -227,7 +237,7 @@ export function Home({ locale }: HomeProps) {
                 2
               </div>
               <span className="text-gray-700 font-medium text-left">
-                {t.step2}
+                {t("step2")}
               </span>
             </div>
             <div className="hidden md:block text-gray-400 text-2xl">→</div>
@@ -236,7 +246,7 @@ export function Home({ locale }: HomeProps) {
                 3
               </div>
               <span className="text-gray-700 font-medium text-left">
-                {t.step3}
+                {t("step3")}
               </span>
             </div>
           </div>
@@ -246,123 +256,11 @@ export function Home({ locale }: HomeProps) {
               className="text-lg px-8 py-6 gap-2 shadow-lg hover:shadow-xl transition-shadow"
             >
               <Send className="h-5 w-5" />
-              {t.beginJourney}
+              {t("beginJourney")}
             </Button>
           </Link>
         </div>
       </div>
     </>
   );
-}
-
-// Translations with Cultural Elements
-function getTranslations(locale: Locale) {
-  return locale === "en"
-    ? {
-        tagline: "Mental Health Support for Aotearoa",
-        heroTitle: "Your Journey to Wellbeing Starts Here",
-        heroSubtitle:
-          "Track your mental health, journal your thoughts, and gain insights with Aroha - a free, private tool designed for young New Zealanders.",
-        heroImageText: "Grow Your Mental Wellness",
-        getStarted: "Get Started",
-
-        // Features - Equal Weight
-        phq9Title: "PHQ-9 Assessment",
-        phq9Description:
-          "Take a clinically-validated depression screening to understand your mental wellbeing.",
-        takeAssessment: "Take Assessment",
-
-        diaryTitle: "Personal Diary",
-        diaryDescription:
-          "Express your thoughts with voice-to-text and AI-powered emotional summaries.",
-        startWriting: "Start Writing",
-
-        historyTitle: "Track Progress",
-        historyDescription:
-          "Visualize your mental health journey with beautiful charts and trend analysis.",
-        viewProgress: "View Progress",
-
-        // Why Aroha - Cultural Focus
-        whyArohaTitle: "Why Choose Aroha?",
-        privateSecureTitle: "Private & Secure",
-        privateSecureDesc:
-          "Your data stays with you. Export or delete anytime. Optional cloud sync with encryption.",
-
-        insightsTitle: "Track & Export",
-        insightsDesc:
-          "Track your mood daily and export your data as PDF or JSON for future clinical records and healthcare provider visits.",
-        aiPoweredTitle: "AI-Powered Insights",
-        aiPoweredDesc:
-          "Voice-to-text diary entries with emotional keyword detection and smart summaries.",
-        nzFocusedTitle: "NZ-Focused Resources",
-        nzFocusedDesc:
-          "Curated mental health resources and crisis support specific to Aotearoa New Zealand.",
-
-        // Quick Start
-        quickStartTitle: "Get Started in 3 Simple Steps",
-        quickStartSubtitle: "Begin your journey to better mental health today",
-        step1: "Take your first PHQ-9 assessment",
-        step2: "Write a diary entry about your day",
-        step3: "Track your progress over time",
-        beginJourney: "Begin Your Journey",
-
-        // Footer - Simplified
-        footerMessage:
-          "You're not alone on this journey. Every step counts. 🌅",
-        footerDisclaimer:
-          "This tool is for self-monitoring only. If you're in crisis, please call 1737 for support.",
-      }
-    : {
-        tagline: "Tautoko Hauora Hinengaro mō Aotearoa",
-        heroTitle: "Tō Haerenga ki te Oranga Ka Tīmata Ināianei",
-        heroSubtitle:
-          "Aroturukihia tō hauora hinengaro, tuhia ō whakaaro, ka whiwhi whāinga mā Aroha - he taputapu kore utu, tūmataiti i hangaia mō ngā taiohi o Aotearoa.",
-        heroImageText: "Whakatipu i Tō Hauora Hinengaro",
-        getStarted: "Tīmata",
-
-        // Features
-        phq9Title: "Aromatawai PHQ-9",
-        phq9Description:
-          "Tangohia tētahi aromatawai aromātai pōuri kua whakamānā ā-haumanu ki te mārama i tō oranga hinengaro.",
-        takeAssessment: "Tango Aromatawai",
-
-        diaryTitle: "Pukapuka Whaiaro",
-        diaryDescription:
-          "Whakapuakina ō whakaaro mā te reo-ki-kupu me ngā whakarāpopototanga kare-ā-roto e whakamanaia e AI.",
-        startWriting: "Tīmata Tuhi",
-
-        historyTitle: "Aroturuki Ahunga",
-        historyDescription:
-          "Whakakitea tō haerenga hauora hinengaro mā ngā kauwhata ātaahua me te tātaritanga ia āhua.",
-        viewProgress: "Tirohia te Ahunga",
-
-        // Why Aroha
-        whyArohaTitle: "He Aha te Kōwhiri i a Aroha?",
-        privateSecureTitle: "Tūmataiti & Haumaru",
-        privateSecureDesc:
-          "Ka noho tō raraunga ki a koe. Kaweakehia, whakakorerangia rānei i ngā wā katoa. He tīpakonga hono kapua me te whakamuna.",
-        aiPoweredTitle: "Whāinga e Whakamanaia e AI",
-        aiPoweredDesc:
-          "Ngā pūkete pukapuka mā te reo-ki-kupu me te kitenga kupu kare-ā-roto me ngā whakarāpopototanga mōhio.",
-        insightsTitle: "Aroturuki & Kaweake",
-        insightsDesc:
-          "Aroturuki ia rā i tō kare-ā-roto me te kaweake i ō raraunga hei PDF, JSON rānei mō ngā pūkete haumanu o te wā kei te heke mai me ngā toronga ki ngā kaiwhakarato hauora.",
-        nzFocusedTitle: "Rauemi Arotahi-NZ",
-        nzFocusedDesc:
-          "Ngā rauemi hauora hinengaro kua whakatauhia me te tautoko ohotata motuhake ki Aotearoa.",
-
-        // Quick Start
-        quickStartTitle: "Tīmata i Roto i te 3 Māhere Māmā",
-        quickStartSubtitle:
-          "Tīmatahia tō haerenga ki te hauora hinengaro pai ināianei",
-        step1: "Tangohia tō aromatawai PHQ-9 tuatahi",
-        step2: "Tuhia he pūkete pukapuka mō tō rā",
-        step3: "Aroturukihia tō ahunga i roto i te wā",
-        beginJourney: "Tīmata Tō Haerenga",
-
-        // Footer - Simplified
-        footerMessage: "Ehara koe i te takitahi. Ko ia hipanga he mea nui. 🌅",
-        footerDisclaimer:
-          "Mō te aroturuki whaiaro anake. Mēnā kei te ohotata koe, waea mai ki te 1737.",
-      };
 }

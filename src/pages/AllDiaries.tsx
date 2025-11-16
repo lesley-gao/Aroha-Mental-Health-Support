@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/timeline';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import type { Locale } from '@/i18n/messages';
+import useTranslation from '@/i18n/useTranslation';
 
 interface DiaryEntry {
   id: string;
@@ -25,31 +25,11 @@ interface DiaryEntry {
   updated_at: string;
 }
 
-interface AllDiariesProps {
-  locale: Locale;
-}
-
-export function AllDiaries({ locale }: AllDiariesProps) {
+export function AllDiaries() {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  const translations = {
-    en: {
-      title: 'All Diary Entries',
-      backToDiary: 'Back to Diary Editor',
-      noEntries: 'No entries yet. Start writing!',
-      loading: 'Loading...'
-    },
-    mi: {
-      title: 'Ngā Pukapuka Katoa',
-      backToDiary: 'Hoki ki te Diary',
-      noEntries: 'Kāore anō kia tuhia. Tīmataria!',
-      loading: 'E uta ana...'
-    }
-  };
-
-  const t = translations[locale as keyof typeof translations] || translations.en;
+  const { t, locale: providerLocale } = useTranslation();
 
   useEffect(() => {
     loadEntries();
@@ -83,21 +63,21 @@ export function AllDiaries({ locale }: AllDiariesProps) {
       <Card className="bg-white/30">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">{t.title}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('diaryShowAllDiaries')}</h1>
             <Button 
               variant="default" 
               onClick={() => navigate('/diary')} 
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              {t.backToDiary}
+              {t('backToDiary')}
             </Button>
           </div>
 
           {isLoading ? (
-            <div className="text-center text-gray-500 py-12">{t.loading}</div>
+            <div className="text-center text-gray-500 py-12">{t('loading')}</div>
           ) : entries.length === 0 ? (
-            <div className="text-center text-gray-500 py-12 text-base">{t.noEntries}</div>
+            <div className="text-center text-gray-500 py-12 text-base">{t('diaryNoEntries')}</div>
           ) : (
             <Timeline>
               {entries.map((entry) => (
@@ -109,7 +89,7 @@ export function AllDiaries({ locale }: AllDiariesProps) {
                       className="w-full text-left group"
                     >
                       <TimelineTime>
-                        {new Date(entry.entry_date).toLocaleDateString(locale === 'mi' ? 'mi-NZ' : 'en-NZ', {
+                        {new Date(entry.entry_date).toLocaleDateString(providerLocale === 'mi' ? 'mi-NZ' : providerLocale === 'zh' ? 'zh-CN' : 'en-NZ', {
                           weekday: 'short',
                           month: 'short',
                           day: 'numeric',
@@ -129,7 +109,7 @@ export function AllDiaries({ locale }: AllDiariesProps) {
                       onClick={() => navigate(`/diary/${entry.entry_date}`)}
                       className="text-base text-right text-indigo-500 hover:text-indigo-800 hover:underline mt-2"
                     >
-                      View Full
+                      {t('diaryViewFull')}
                     </button>
                   </TimelineContent>
                 </TimelineItem>

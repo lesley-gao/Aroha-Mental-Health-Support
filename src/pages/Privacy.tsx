@@ -1,6 +1,12 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -8,36 +14,34 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { clearAllData, exportAllData } from '@/utils/storage';
-import { getMessages, type Locale } from '@/i18n/messages';
-import { Download, Trash2, Shield, Info } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { clearAllData, exportAllData } from "@/utils/storage";
+import useTranslation from "@/i18n/useTranslation";
+import { Download, Trash2, Shield, Info } from "lucide-react";
 
-interface PrivacyPageProps {
-  locale: Locale;
-}
+
 
 /**
  * Privacy & Data Management page
  * Allows users to delete all data or export it as JSON
  */
-export function PrivacyPage({ locale }: PrivacyPageProps) {
+export function PrivacyPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const messages = getMessages(locale);
+  const { t } = useTranslation();
 
   const handleDeleteAllData = async () => {
     setIsDeleting(true);
     try {
       await clearAllData();
       setShowDeleteConfirm(false);
-      alert('All data has been deleted successfully.');
+      alert("All data has been deleted successfully.");
       // Reload the page to reset the app state
       window.location.reload();
     } catch (error) {
-      console.error('Error deleting data:', error);
-      alert('Failed to delete data. Please try again.');
+      console.error("Error deleting data:", error);
+      alert("Failed to delete data. Please try again.");
     } finally {
       setIsDeleting(false);
     }
@@ -47,22 +51,24 @@ export function PrivacyPage({ locale }: PrivacyPageProps) {
     setIsExporting(true);
     try {
       const jsonData = await exportAllData();
-      
+
       // Create a blob and download it
-      const blob = new Blob([jsonData], { type: 'application/json' });
+      const blob = new Blob([jsonData], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `aroha-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `aroha-data-export-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
-      alert('Data exported successfully!');
+
+      alert("Data exported successfully!");
     } catch (error) {
-      console.error('Error exporting data:', error);
-      alert('Failed to export data. Please try again.');
+      console.error("Error exporting data:", error);
+      alert("Failed to export data. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -71,92 +77,83 @@ export function PrivacyPage({ locale }: PrivacyPageProps) {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{messages.privacyTitle}</h1>
-        <p className="text-gray-600">Manage your data and privacy settings</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('privacyTitle')}</h1>
+        <p className="text-gray-600">{t('privacyPageIntro')}</p>
       </div>
 
       {/* Privacy Information Card */}
-      <Card>
+      <Card className="bg-white/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-blue-600" />
-            Your Privacy
+            <Shield className="h-5 w-5 text-teal-600" />
+            {t('privacyCardTitle')}
           </CardTitle>
-          <CardDescription>How your data is stored and protected</CardDescription>
+          <CardDescription>{t('privacyCardDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <h3 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
               <Info className="h-4 w-4" />
-              Local Storage Only
+              {t('privacyLocalStorageHeading')}
             </h3>
-            <p className=" text-green-800">
-              All your assessment data is stored only on this device in your browser's local storage. 
-              No data is sent to external servers or cloud services.
-            </p>
+            <p className=" text-green-800">{t('privacyLocalStorageText')}</p>
           </div>
 
           <div className="space-y-2 text-gray-700">
             <p>
-              <strong>What we store:</strong> PHQ-9 assessment responses, scores, dates, language preference, and consent status.
+              <strong>{t('privacyWhatWeStoreLabel')}</strong> {t('privacyWhatWeStore')}
             </p>
             <p>
-              <strong>What we don't store:</strong> No personal identification, no account information, no tracking data.
+              <strong>{t('privacyWhatWeDontStoreLabel')}</strong> {t('privacyWhatWeDontStore')}
             </p>
             <p>
-              <strong>Data persistence:</strong> Your data remains on this device until you delete it or clear your browser data.
+              <strong>{t('privacyDataPersistenceLabel')}</strong> {t('privacyDataPersistence')}
             </p>
           </div>
         </CardContent>
       </Card>
 
       {/* Export Data Card */}
-      <Card>
+      <Card className="bg-white/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5 text-blue-600" />
-            Export Your Data
+            <Download className="h-5 w-5 text-teal-600" />
+            {t('privacyExportCardTitle')}
           </CardTitle>
-          <CardDescription>Download all your data as a JSON file</CardDescription>
+          <CardDescription>{t('privacyExportCardDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className=" text-gray-700 mb-4">
-            Export all your assessment records, settings, and data in JSON format. 
-            You can share this file with a healthcare provider or keep it as a backup.
-          </p>
-          <Button 
-            onClick={handleExportData} 
+          <p className=" text-gray-700 mb-4">{t('privacyExportExplanation')}</p>
+          <Button
+            onClick={handleExportData}
             disabled={isExporting}
-            variant="outline"
+            variant="default"
             className="w-full sm:w-auto"
           >
             <Download className="h-4 w-4 mr-2" />
-            {isExporting ? 'Exporting...' : messages.privacyExportButton}
+            {isExporting ? t('privacyExporting') : t('privacyExportButton')}
           </Button>
         </CardContent>
       </Card>
 
       {/* Delete Data Card */}
-      <Card>
+      <Card className="bg-white/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-700">
             <Trash2 className="h-5 w-5" />
-            Delete All Data
+            {t('privacyDeleteCardTitle')}
           </CardTitle>
-          <CardDescription>Permanently remove all your data from this device</CardDescription>
+          <CardDescription>{t('privacyDeleteCardDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className=" text-gray-700 mb-4">
-            This will permanently delete all your PHQ-9 assessments, history, and settings. 
-            This action cannot be undone. Consider exporting your data first.
-          </p>
-          <Button 
+          <p className=" text-gray-700 mb-4">{t('privacyDeleteWarning')}</p>
+            <Button
             onClick={() => setShowDeleteConfirm(true)}
             variant="destructive"
             className="w-full sm:w-auto"
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            {messages.privacyDeleteButton}
+              {t('privacyDeleteButton')}
           </Button>
         </CardContent>
       </Card>
@@ -164,7 +161,7 @@ export function PrivacyPage({ locale }: PrivacyPageProps) {
       {/* Attribution */}
       <Card className="bg-gray-50">
         <CardContent className="pt-6">
-          <p className="text-xs text-gray-600">{messages.translationAttribution}</p>
+          <p className="text-xs text-gray-600">{t('translationAttribution')}</p>
         </CardContent>
       </Card>
 
@@ -172,9 +169,9 @@ export function PrivacyPage({ locale }: PrivacyPageProps) {
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-red-700">Confirm Deletion</DialogTitle>
+            <DialogTitle className="text-red-700">{t('privacyConfirmDeletionTitle')}</DialogTitle>
             <DialogDescription className="pt-4">
-              {messages.privacyDeleteConfirm}
+              {t('privacyDeleteConfirm')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
@@ -183,14 +180,14 @@ export function PrivacyPage({ locale }: PrivacyPageProps) {
               onClick={() => setShowDeleteConfirm(false)}
               disabled={isDeleting}
             >
-              {messages.cancel}
+              {t('cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteAllData}
               disabled={isDeleting}
             >
-              {isDeleting ? 'Deleting...' : messages.delete}
+              {isDeleting ? "Deleting..." : t('delete')}
             </Button>
           </DialogFooter>
         </DialogContent>
