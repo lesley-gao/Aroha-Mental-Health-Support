@@ -31,8 +31,6 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
   const [email, setEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
-  const [emailConfirmationRequired, setEmailConfirmationRequired] =
-    useState(false);
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,7 +40,9 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
       <div className="py-6 px-6 md:py-16 md:px-16 flex flex-col min-h-screen md:min-h-0">
         {/* Logo */}
         <div className="mb-24">
-          <img src="/logo.png" alt="Aroha Logo" className="h-14 w-auto" />
+          <a href="/">
+            <img src="/logo.png" alt="Aroha Logo" className="h-14 w-auto" />
+          </a>
         </div>
 
         <div className="flex-1">
@@ -167,9 +167,8 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
                         Success! Your account has been created
                       </AlertTitle>
                       <AlertDescription>
-                        {emailConfirmationRequired
-                          ? "Please verify your email by clicking the link sent to your inbox before logging in."
-                          : "You can now log in using your email and password."}
+                        Please verify your email by clicking the link sent to
+                        your inbox before logging in.
                       </AlertDescription>
                     </div>
                   </Alert>
@@ -298,18 +297,13 @@ export function Auth({ defaultTab = "signup", onAuthenticated }: AuthProps) {
                         setActive("login");
                         setEmail(signupEmail);
                       } else {
-                        // Check if user needs to confirm email
-                        const needsEmailConfirmation =
-                          data.user.confirmed_at === null;
-
+                        // All accounts require email confirmation
                         console.log(
-                          "Email confirmation required:",
-                          needsEmailConfirmation
+                          "User created, email confirmation required"
                         );
                         console.log("confirmed_at:", data.user.confirmed_at);
 
                         // Set state and switch to login tab
-                        setEmailConfirmationRequired(needsEmailConfirmation);
                         setSignupSuccess(true);
                         setEmail(signupEmail);
                         setActive("login");

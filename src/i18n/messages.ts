@@ -109,6 +109,15 @@ export interface Messages {
   disclaimer: string;
   translationAttribution: string;
   
+  // Consent details
+  consentKnowHeading: string;
+  consentPoint1: string;
+  consentPoint2: string;
+  consentPoint3: string;
+  consentPoint4: string;
+  consentPoint5: string;
+  consentPoint6: string;
+  
   // Footer
   footerMessage: string;
   footerDisclaimer: string;
@@ -253,7 +262,7 @@ const messages: Record<Locale, Messages> = {
     escalationText: 'Your score indicates you may be experiencing significant distress. We strongly encourage you to reach out for support. If you\'re in immediate danger, please call 111.',
     
     consentTitle: 'Privacy & Consent',
-    consentText: 'You can use this app without creating an account; creating an account and enabling cloud sync lets you save and access your records across your devices. Your data is stored securely when cloud sync is enabled. This app includes optional speech-to-text features that require microphone access — you can use the app fully without enabling these features. You can export your data as a PDF or JSON file to share with a healthcare provider. You can delete all your data at any time from the Privacy settings.',
+    consentText: 'We want you to feel safe and in control:',
     consentButton: 'I understand and consent',
     loginButton: 'Login',
     
@@ -298,6 +307,15 @@ const messages: Record<Locale, Messages> = {
     
     disclaimer: 'This tool is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.',
     translationAttribution: 'PHQ-9 translations sourced from phqscreeners.com. Cultural review recommended.',
+    
+    consentKnowHeading: 'What you should know:',
+    consentPoint1: 'You can use Aroha anonymously - no account needed',
+    consentPoint2: 'Create an account anytime to save and access your records across devices',
+    consentPoint3: 'Your data is always encrypted and stored securely',
+    consentPoint4: 'Microphone access is completely optional (only for voice journaling)',
+    consentPoint5: 'Export or share your data whenever you need to',
+    consentPoint6: "You can delete everything anytime - it's your data",
+    
     footerMessage: "You're not alone on this journey. Every step counts.",
     footerDisclaimer:
       "This tool is for self-monitoring only. If you're in crisis, please call 1737 for support.",
@@ -469,7 +487,7 @@ const messages: Record<Locale, Messages> = {
     escalationText: '你的得分显示你可能正经历较严重的痛苦。我们强烈建议你寻求支持。如果你处于危险之中，请拨打紧急电话。',
 
     consentTitle: '隐私与同意',
-    consentText: '你可以在不创建账户的情况下使用此应用；创建账户并启用云同步可将记录保存并在你的设备间访问。开启云同步时，数据会被安全地存储。应用包含可选的语音转文字功能，需要麦克风权限——你也可以在不启用这些功能的情况下完整使用应用。你可以将数据导出为 PDF 或 JSON 与医疗服务提供者共享，也可以随时在隐私设置中删除所有数据。',
+    consentText: '我们希望你感到安心，并且觉得一切尽在你的掌控：',
     consentButton: '我已阅读并同意',
     loginButton: '登录',
 
@@ -513,6 +531,15 @@ const messages: Record<Locale, Messages> = {
 
     disclaimer: '此工具仅供参考，不能替代专业医疗建议、诊断或治疗。',
     translationAttribution: 'PHQ-9 翻译来源于 phqscreeners.com。建议进行文化和临床审查。',
+    
+    consentKnowHeading: '你需要知道的：',
+    consentPoint1: '你可以匿名使用 Aroha — 无需创建账户',
+    consentPoint2: '随时创建账户以保存并跨设备访问你的记录',
+    consentPoint3: '你的数据始终经过加密并安全存储',
+    consentPoint4: '麦克风访问完全可选（仅用于语音日记）',
+    consentPoint5: '随时导出或分享你的数据',
+    consentPoint6: '你可以随时删除所有内容 — 这是你的数据',
+    
   footerMessage: '你并不孤单，每一步都很重要。',
   footerDisclaimer: '此工具仅供自我监测使用。如果你处于危机中，请拨打1737寻求帮助。',
   navHome: '主页',
@@ -682,7 +709,7 @@ const messages: Record<Locale, Messages> = {
     escalationText: 'Ko tō tohu e tohu ana kei te pā mai pea te mamae nui. E tino akiaki ana mātou kia toro atu koe ki te tautoko. Mēnā kei te mōrearea tūturu koe, waea ināianei ki te 111.',
     
     consentTitle: 'Tūmataiti me te Whakaae',
-    consentText: 'Ka taea e koe te whakamahi i tēnei taupānga me te kore e hanga pūkete; mā te hanga pūkete me te whakahohe i te tukutahi kapua ka taea e koe te tiaki me te uru ki ō rekoata puta noa i ō pūrere. Mēnā ka whakahohe koe i te tukutahi kapua, ka tiakina ō raraunga i runga i tō kāwai haumaru. He āhuatanga kōrero-ki-te-tuhi whiriwhiri kei roto i te taupānga e hiahiatia ai te uru mikiona — ka taea e koe te whakamahi i te taupānga me te kore e whakahohe i ēnei āhuatanga. Ka taea e koe te kaweake i ō raraunga hei PDF, JSON rānei; ka taea hoki te muku i ō raraunga i ngā tautuhinga Tūmataiti.',
+    consentText: 'Kei te hiahia mātou kia maurea e koe te haumaru me te mana:',
     consentButton: 'Kua mārama ahau, ka whakaae',
     loginButton: 'Takiuru',
     
@@ -727,6 +754,15 @@ const messages: Record<Locale, Messages> = {
     
     disclaimer: 'He taputapu whakamōhiotanga anake tēnei, ehara i te whakakapi mō te tohutohu rata ngaio, te taumate, te maimoatanga rānei.',
     translationAttribution: 'Ko ngā whakamāoritanga PHQ-9 mai i te phqscreeners.com. Me arotake e te ahurea.',
+    
+    consentKnowHeading: 'Me mōhio koe:',
+    consentPoint1: 'Ka taea e koe te whakamahi i a Aroha me te kore ingoa — kāore e hiahia pūkete',
+    consentPoint2: 'Waihanga pūkete i ngā wā katoa hei tiaki me te uru ki ō pūkete puta noa i ngā pūrere',
+    consentPoint3: 'Ka whakamunaina tōu raraunga, ka tiakina hoki i te haumaru',
+    consentPoint4: 'Ko te uru mikiona he whiringa katoa (mō te pukapuka reo anake)',
+    consentPoint5: 'Kaweakehia, tiri rānei i ō raraunga i ngā wā e hiahia ana koe',
+    consentPoint6: 'Ka taea e koe te muku i ngā mea katoa i ngā wā katoa — ko tō raraunga tēnei',
+    
   footerMessage: 'Ehara koe i te takitahi i runga i tēnei haerenga. He mea nui ia hipanga.',
   footerDisclaimer: 'He taputapu mō te aroturuki whaiaro anake. Mēnā kei te ohotata koe, waea 1737 mō te tautoko.',
   navHome: 'Kāinga',

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,10 +6,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { getConsent, setConsent } from '@/utils/storage';
-import useTranslation from '@/i18n/useTranslation';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { getConsent, setConsent } from "@/utils/storage";
+import useTranslation from "@/i18n/useTranslation";
 
 interface ConsentModalProps {
   onConsent: () => void;
@@ -22,8 +22,6 @@ interface ConsentModalProps {
  */
 export function ConsentModal({ onConsent }: ConsentModalProps) {
   const [open, setOpen] = useState(false);
-  const [showSaved, setShowSaved] = useState(false);
-  const timerRef = useRef<number | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -40,55 +38,60 @@ export function ConsentModal({ onConsent }: ConsentModalProps) {
       hasConsented: true,
       consentDate: new Date().toISOString(),
     });
-    // Show a brief confirmation then close
-    setShowSaved(true);
-    // close modal after a short delay so user sees confirmation
-    timerRef.current = window.setTimeout(() => {
-      setShowSaved(false);
-      setOpen(false);
-      onConsent();
-    }, 1200);
+    setOpen(false);
+    onConsent();
   };
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[900px] max-w-4xl" onPointerDownOutside={(e) => e.preventDefault()}>
-          <DialogHeader>
-          <DialogTitle className="text-xl">{t('consentTitle')}</DialogTitle>
-          <DialogDescription className="text-sm pt-4 space-y-4">
-            <p>{t('consentText')}</p>
+      <DialogContent
+        className="max-w-4xl p-0 gap-0"
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
+        <div className="flex flex-col md:flex-row">
+          {/* Left: Content */}
+          <div className="p-6 md:p-8 flex-1">
+            <DialogHeader>
+              <DialogTitle className="text-xl">{t("consentTitle")}</DialogTitle>
+              <DialogDescription className="pt-4 space-y-8 text-gray-800">
+                <p>{t("consentText")}</p>
 
-            <div className="bg-[#D1F08B] border-l-4 border-[#009490] p-4 my-4 text-sm">
-              <h4 className="font-semibold mb-2 text-base">What you should know:</h4>
-              <ul className="space-y-2 list-disc list-inside">
-                <li>You can use the app anonymously — no account required to take assessments.</li>
-                <li>Creating an account and enabling cloud sync lets you save and access records across devices.</li>
-                <li>If you enable cloud sync, your data is stored securely in our database.</li>
-                <li>Microphone access is optional and only used for speech-to-text features.</li>
-                <li>You control exports and sharing (PDF/JSON) and can delete your data at any time.</li>
-              </ul>
-            </div>
+                <div className="bg-[#D1F08B] border-l-4 border-[#009490] p-4 my-8 text-sm">
+                  <h4 className="font-semibold mb-2 text-base">
+                    {t("consentKnowHeading")}
+                  </h4>
+                  <ul className="space-y-2 list-disc list-inside">
+                    <li>{t("consentPoint1")}</li>
+                    <li>{t("consentPoint2")}</li>
+                    <li>{t("consentPoint3")}</li>
+                    <li>{t("consentPoint4")}</li>
+                    <li>{t("consentPoint5")}</li>
+                    <li>{t("consentPoint6")}</li>
+                  </ul>
+                </div>
 
-            <p className="text-sm text-gray-500 italic">{t('disclaimer')}</p>
-          </DialogDescription>
-        </DialogHeader>
+                <p className="text-sm text-gray-800 italic">
+                  {t("disclaimer")}
+                </p>
+              </DialogDescription>
+            </DialogHeader>
 
-        <DialogFooter>
-          {showSaved && (
-            <div className="text-emerald-700 font-medium mr-4">Saved</div>
-          )}
-          <Button onClick={handleConsent} className="w-full sm:w-auto" disabled={showSaved}>
-            {t('consentButton')}
-          </Button>
-        </DialogFooter>
+            <DialogFooter className="mt-6">
+              <Button onClick={handleConsent} className="w-full sm:w-auto">
+                {t("consentButton")}
+              </Button>
+            </DialogFooter>
+          </div>
+
+          {/* Right: Image */}
+          <div className="hidden md:flex bg-gray-100 items-center justify-center">
+            <img
+              src="/dolphin-cover.png"
+              alt="Privacy illustration"
+              className="h-[300px] w-auto object-contain"
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

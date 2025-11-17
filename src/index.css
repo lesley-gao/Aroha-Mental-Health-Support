@@ -52,17 +52,24 @@
   /* Skip to main content link for screen readers */
   .skip-to-main {
     position: absolute;
-    top: -40px;
-    left: 0;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
     background: #000;
     color: #fff;
     padding: 8px;
     text-decoration: none;
-    z-index: 100;
+    z-index: 9999;
   }
 
   .skip-to-main:focus {
-    top: 0;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: auto;
+    height: auto;
+    overflow: visible;
   }
 
   /* Use Comfortaa for all headings */
